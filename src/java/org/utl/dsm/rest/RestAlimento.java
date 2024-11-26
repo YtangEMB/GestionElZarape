@@ -9,35 +9,36 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.utl.dsm.controller.ControllerAlimento;
-import org.utl.dsm.model.Alimento;
 import org.utl.dsm.model.Producto;
 
 @Path("Alimento")
 public class RestAlimento extends Application {
 
+    private final Gson gson = new Gson();
+
     @Path("getAllAlimentos")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllAlimentos() {
-        List<Producto> lista = null;
-        Gson gson = new Gson();
-        String out = null;
-        ControllerAlimento ca = null;
+        List<Producto> lista;
+        Map<String, Object> response = new HashMap<>();
         try {
-            ca = new ControllerAlimento();
+            ControllerAlimento ca = new ControllerAlimento();
             lista = ca.getAllAlimentosFromView();
-            out = gson.toJson(lista);
+            response.put("result", "success");
+            response.put("data", lista);
         } catch (Exception e) {
             e.printStackTrace();
-            out = """
-                  {"result":"Error de servidor"}
-                  """;
+            response.put("result", "error");
+            response.put("message", "Error al obtener los alimentos");
         }
-        return Response.ok(out).build();
+        return Response.ok(gson.toJson(response)).build();
     }
-    
+
     @Path("insertAlimento")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -47,37 +48,39 @@ public class RestAlimento extends Application {
             @FormParam("foto") String foto,
             @FormParam("precio") int precio,
             @FormParam("categoria") String categoria) {
-        
-        String result;
-        ControllerAlimento ca = new ControllerAlimento();
-        
+
+        Map<String, String> response = new HashMap<>();
         try {
-            result = ca.insertAlimento(nombre, descripcion, foto, precio, categoria);
+            ControllerAlimento ca = new ControllerAlimento();
+            String result = ca.insertAlimento(nombre, descripcion, foto, precio, categoria);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al insertar el alimento\"}";
+            response.put("result", "error");
+            response.put("message", "Error al insertar el alimento");
         }
-        
-        return Response.ok(result).build();
+        return Response.ok(gson.toJson(response)).build();
     }
-    
+
     @Path("deleteAlimento")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteAlimento(@FormParam("idProducto") int idProducto) {
-        String result;
-        ControllerAlimento ca = new ControllerAlimento();
-        
+        Map<String, String> response = new HashMap<>();
         try {
-            result = ca.deleteAlimento(idProducto);
+            ControllerAlimento ca = new ControllerAlimento();
+            String result = ca.deleteAlimento(idProducto);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al eliminar el alimento\"}";
+            response.put("result", "error");
+            response.put("message", "Error al eliminar el alimento");
         }
-        
-        return Response.ok(result).build();
+        return Response.ok(gson.toJson(response)).build();
     }
-    
+
     @Path("updateAlimento")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -89,16 +92,17 @@ public class RestAlimento extends Application {
             @FormParam("precio") int precio,
             @FormParam("categoria") String categoria) {
 
-        String result;
-        ControllerAlimento ca = new ControllerAlimento();
-
+        Map<String, String> response = new HashMap<>();
         try {
-            result = ca.updateAlimento(idProducto, nombre, descripcion, foto, precio, categoria);
+            ControllerAlimento ca = new ControllerAlimento();
+            String result = ca.updateAlimento(idProducto, nombre, descripcion, foto, precio, categoria);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al actualizar el alimento\"}";
+            response.put("result", "error");
+            response.put("message", "Error al actualizar el alimento");
         }
-
-        return Response.ok(result).build();
+        return Response.ok(gson.toJson(response)).build();
     }
 }

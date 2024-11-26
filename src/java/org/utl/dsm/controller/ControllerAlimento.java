@@ -28,12 +28,13 @@ public class ControllerAlimento {
         connMysql.close();
         return listaProductos;
     }
-
+    
     private Producto fillFromView(ResultSet rs) throws SQLException {
         Categoria categoria = new Categoria();
         categoria.setDescripcion(rs.getString("categoria"));
-
+        
         Producto producto = new Producto();
+        producto.setIdProducto(rs.getInt("idProducto"));
         producto.setNombre(rs.getString("nombre"));
         producto.setDescripcion(rs.getString("descripcion"));
         producto.setFoto(rs.getString("foto"));

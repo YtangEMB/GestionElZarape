@@ -54,6 +54,9 @@
                     <h4>Agregar/Editar Alimento</h4>
                     <form id="food-form" enctype="multipart/form-data">
                         <div class="form-group">
+                            <input type="text" id="idAlimento" class="form-control" placeholder="id" hidden>
+                        </div>
+                        <div class="form-group">
                             <label for="food-name">Nombre</label>
                             <input type="text" id="food-name" class="form-control" placeholder="Nombre" required>
                         </div>
@@ -66,8 +69,8 @@
                             <textarea id="food-description" class="form-control" placeholder="Descripción" rows="3" required></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="food-photo">Foto</label>
-                            <input type="file" id="food-photo" class="form-control" accept="image/*">
+                            <label for="food-photo">Foto (URL)</label>
+                            <input type="text" id="food-photo" class="form-control" placeholder="URL de la foto" required>
                         </div>
                         <div class="form-group">
                             <label for="food-category">Categoría</label>
@@ -80,8 +83,11 @@
                         </div>
                         <br>
                         <button type="submit" class="save">Guardar</button>
+                        <button type="button" class="edit" id="edit-btn" style="display:none;">Editar</button>
+                        <button type="button" class="delete" id="delete-btn" style="display:none;">Eliminar</button>
                         <button type="button" class="cancel" id="cancel-edit" style="display:none;">Cancelar</button>
                     </form>
+
                 </div>
                 <div class="container-table col-md-10">
                     <br><h4>Buscar Alimento</h4>
@@ -90,21 +96,20 @@
                     </div>
                     <br><h4>Lista de Alimentos</h4>
                     <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Precio</th>
-                                <th>Descripción</th>
-                                <th>Foto</th>
-                                <th>Categoría</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="food-list">
-                            
-                        </tbody>
-                    </table>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Precio</th>
+                                    <th>Descripción</th>
+                                    <th>Foto</th>
+                                    <th>Categoría</th>
+                                </tr>
+                            </thead>
+                            <tbody id="food-list">
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
