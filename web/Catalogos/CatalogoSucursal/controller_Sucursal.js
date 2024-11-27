@@ -1,7 +1,6 @@
 const API_BASE_URL = "http://localhost:8080/GestionElZarape/api/Sucursal";
 let selectedBranchId = null;
 
-// Función para renderizar la lista de sucursales en la tabla
 function renderBranchList(sucursales) {
     const branchList = document.getElementById("branch-list");
     branchList.innerHTML = sucursales.map(sucursal => `
@@ -19,7 +18,6 @@ function renderBranchList(sucursales) {
     `).join("");
 }
 
-// Función para cargar datos de la sucursal en el formulario
 function loadSucursal(idSucursal) {
     selectedBranchId = idSucursal;
     const row = document.querySelector(`#branch-list tr[data-id="${idSucursal}"]`);
@@ -27,33 +25,29 @@ function loadSucursal(idSucursal) {
     document.getElementById('idSucursal').value = idSucursal;
     document.getElementById('branch-name').value = row.cells[0].textContent;
     
-    // Separar la información de la calle, número y colonia (suponiendo que está en la columna 2)
-    const direccion = row.cells[1].textContent.split(",");  // separa por coma
-    const calle = direccion[0]?.trim() || "";  // Extrae la calle
-    const numCalle = direccion[1]?.trim() || "";  // Extrae el número de la calle
-    const colonia = direccion[2]?.trim() || "";  // Extrae la colonia
+    const direccion = row.cells[1].textContent.split(",");  
+    const calle = direccion[0]?.trim() || "";  
+    const numCalle = direccion[1]?.trim() || "";  
+    const colonia = direccion[2]?.trim() || "";  
     
-    // Asignar los valores a los campos correspondientes
     document.getElementById('branch-calle').value = calle;
     document.getElementById('branch-numcalle').value = numCalle;
     document.getElementById('branch-colonia').value = colonia;
     
-    document.getElementById('branch-photo').value = row.cells[2].textContent; // Ajustar según la columna
-    document.getElementById('branch-url').value = row.cells[3].textContent; // Ajustar según la columna
-    document.getElementById('branch-lat').value = row.cells[4].textContent; // Ajustar según la columna
-    document.getElementById('branch-lon').value = row.cells[5].textContent; // Ajustar según la columna
-    document.getElementById('branch-time').value = row.cells[6].textContent; // Ajustar según la columna
-    document.getElementById('branch-city').value = row.cells[7].textContent; // Ajustar según la columna
+    document.getElementById('branch-photo').value = row.cells[2].querySelector('img').src;
+    document.getElementById('branch-url').value = row.cells[3].textContent;
+    document.getElementById('branch-lat').value = row.cells[4].textContent;
+    document.getElementById('branch-lon').value = row.cells[5].textContent;
+    document.getElementById('branch-time').value = row.cells[6].textContent;
+    document.getElementById('branch-city').value = row.cells[7].textContent;
 }
 
 
-// Función para manejar la selección de la sucursal
 function selectBranch(idSucursal) {
     loadSucursal(idSucursal);
     showActionButtons(idSucursal);
 }
 
-// Función para mostrar los botones de acción
 function showActionButtons(idSucursal) {
     document.getElementById('edit-btn').style.display = 'inline-block';
     document.getElementById('delete-btn').style.display = 'inline-block';
@@ -78,7 +72,6 @@ function showActionButtons(idSucursal) {
     document.getElementById('cancel-edit').onclick = () => cancelEdit();
 }
 
-// Función para cancelar la edición y ocultar los botones de acción
 function cancelEdit() {
     selectedBranchId = null;
     document.getElementById('branch-form').reset();
@@ -87,7 +80,6 @@ function cancelEdit() {
     document.getElementById('cancel-edit').style.display = 'none';
 }
 
-// Función para obtener todas las sucursales
 async function getAllSucursales() {
     try {
         const response = await fetch(`${API_BASE_URL}/getAllSucursales`);
@@ -102,7 +94,6 @@ async function getAllSucursales() {
     }
 }
 
-// Función para insertar una sucursal
 async function insertSucursal(sucursal) {
     try {
         const response = await fetch(`${API_BASE_URL}/insertSucursal`, {
@@ -124,7 +115,6 @@ async function insertSucursal(sucursal) {
     }
 }
 
-// Función para actualizar una sucursal
 async function updateSucursal(sucursal) {
     try {
         const response = await fetch(`${API_BASE_URL}/updateSucursal`, {
@@ -147,7 +137,6 @@ async function updateSucursal(sucursal) {
     }
 }
 
-// Función para eliminar una sucursal
 async function deleteSucursal(idSucursal) {
     try {
         const response = await fetch(`${API_BASE_URL}/deleteSucursal`, {
@@ -170,5 +159,4 @@ async function deleteSucursal(idSucursal) {
     }
 }
 
-// Inicialización de la tabla de sucursales
 getAllSucursales();
