@@ -1,126 +1,174 @@
-let sucursales = [];
-let editIndex = -1;
+const API_BASE_URL = "http://localhost:8080/GestionElZarape/api/Sucursal";
+let selectedBranchId = null;
 
-// Cargar sucursales desde el archivo JSON al iniciar
-fetch('sucursales.json')
-    .then(response => response.json())
-    .then(data => {
-        sucursales = data;
-        renderBranches();
+// Función para renderizar la lista de sucursales en la tabla
+function renderBranchList(sucursales) {
+    const branchList = document.getElementById("branch-list");
+    branchList.innerHTML = sucursales.map(sucursal => `
+        <tr data-id="${sucursal.idSucursal}" onclick="selectBranch(${sucursal.idSucursal})">
+            <td>${sucursal.nombre}</td>
+            <td>${sucursal.calle}, ${sucursal.numCalle}, ${sucursal.colonia}</td>
+            <td><img src="${sucursal.foto}" alt="Foto" style="width: 50px; height: auto;"></td>
+            <td><a href="${sucursal.urlWeb}" target="_blank">${sucursal.urlWeb}</a></td>
+            <td>${sucursal.latitud}</td>
+            <td>${sucursal.longitud}</td>
+            <td>${sucursal.horarios}</td>
+            <td>${sucursal.ciudadNombre}</td>
+            <td>${sucursal.estadoNombre}</td>
+        </tr>
+    `).join("");
+}
+
+// Función para cargar datos de la sucursal en el formulario
+function loadSucursal(idSucursal) {
+    selectedBranchId = idSucursal;
+    const row = document.querySelector(`#branch-list tr[data-id="${idSucursal}"]`);
+    
+    document.getElementById('idSucursal').value = idSucursal;
+    document.getElementById('branch-name').value = row.cells[0].textContent;
+    
+    // Separar la información de la calle, número y colonia (suponiendo que está en la columna 2)
+    const direccion = row.cells[1].textContent.split(",");  // separa por coma
+    const calle = direccion[0]?.trim() || "";  // Extrae la calle
+    const numCalle = direccion[1]?.trim() || "";  // Extrae el número de la calle
+    const colonia = direccion[2]?.trim() || "";  // Extrae la colonia
+    
+    // Asignar los valores a los campos correspondientes
+    document.getElementById('branch-calle').value = calle;
+    document.getElementById('branch-numcalle').value = numCalle;
+    document.getElementById('branch-colonia').value = colonia;
+    
+    document.getElementById('branch-photo').value = row.cells[2].textContent; // Ajustar según la columna
+    document.getElementById('branch-url').value = row.cells[3].textContent; // Ajustar según la columna
+    document.getElementById('branch-lat').value = row.cells[4].textContent; // Ajustar según la columna
+    document.getElementById('branch-lon').value = row.cells[5].textContent; // Ajustar según la columna
+    document.getElementById('branch-time').value = row.cells[6].textContent; // Ajustar según la columna
+    document.getElementById('branch-city').value = row.cells[7].textContent; // Ajustar según la columna
+}
+
+
+// Función para manejar la selección de la sucursal
+function selectBranch(idSucursal) {
+    loadSucursal(idSucursal);
+    showActionButtons(idSucursal);
+}
+
+// Función para mostrar los botones de acción
+function showActionButtons(idSucursal) {
+    document.getElementById('edit-btn').style.display = 'inline-block';
+    document.getElementById('delete-btn').style.display = 'inline-block';
+    document.getElementById('cancel-edit').style.display = 'inline-block';
+    
+    document.getElementById('edit-btn').onclick = () => updateSucursal({
+        idSucursal: selectedBranchId,
+        nombre: document.getElementById("branch-name").value,
+        latitud: document.getElementById("branch-lat").value,
+        longitud: document.getElementById("branch-lon").value,
+        foto: document.getElementById("branch-photo").value,
+        urlWeb: document.getElementById("branch-url").value,
+        horarios: document.getElementById("branch-time").value,
+        calle: document.getElementById("branch-calle").value,
+        numCalle: document.getElementById("branch-numcalle").value,
+        colonia: document.getElementById("branch-colonia").value,
+        nombreCiudad: document.getElementById("branch-city").value
     });
+    
+    document.getElementById('delete-btn').onclick = () => deleteSucursal(selectedBranchId);
+    
+    document.getElementById('cancel-edit').onclick = () => cancelEdit();
+}
 
-// Guardar o actualizar sucursal
-document.getElementById('branch-form').addEventListener('submit', function (event) {
-    event.preventDefault();
+// Función para cancelar la edición y ocultar los botones de acción
+function cancelEdit() {
+    selectedBranchId = null;
+    document.getElementById('branch-form').reset();
+    document.getElementById('edit-btn').style.display = 'none';
+    document.getElementById('delete-btn').style.display = 'none';
+    document.getElementById('cancel-edit').style.display = 'none';
+}
 
-    const sucursal = {
-        nombre: document.getElementById('branch-name').value,
-        direccion: document.getElementById('branch-address').value,
-        foto: document.getElementById('branch-photo').files[0] ? URL.createObjectURL(document.getElementById('branch-photo').files[0]) : "",
-        url: document.getElementById('branch-url').value,
-        gps_latitud: document.getElementById('branch-lat').value,
-        gps_longitud: document.getElementById('branch-lon').value,
-        horario_apertura: document.getElementById('opening-time').value,
-        horario_cierre: document.getElementById('closing-time').value
-    };
-
-    if (editIndex === -1) {
-        sucursales.push(sucursal);
-    } else {
-        sucursales[editIndex] = sucursal;
-        editIndex = -1;
-        document.getElementById('cancel-edit').style.display = 'none';
+// Función para obtener todas las sucursales
+async function getAllSucursales() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/getAllSucursales`);
+        const data = await response.json();
+        if (data.result === "success") {
+            renderBranchList(data.data);
+        } else {
+            alert("Error al obtener las sucursales: " + data.message);
+        }
+    } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
     }
-
-    renderBranches();
-    document.getElementById('branch-form').reset();
-});
-
-// Renderizar lista de sucursales
-function renderBranches() {
-    const branchList = document.getElementById('branch-list');
-    branchList.innerHTML = '';
-
-    sucursales.forEach((sucursal, index) => {
-        const row = document.createElement('tr');
-
-        row.innerHTML = `
-            <td>${sucursal.nombre}</td>
-            <td>${sucursal.direccion}</td>
-            <td><img src="${sucursal.foto}" alt="Foto" width="50" height="50"></td>
-            <td><a href="${sucursal.url}" target="_blank">${sucursal.url}</a></td>
-            <td>${sucursal.gps_latitud}</td>
-            <td>${sucursal.gps_longitud}</td>
-            <td>${sucursal.horario_apertura}</td>
-            <td>${sucursal.horario_cierre}</td>
-            <td>
-                <button class="edit" onclick="editBranch(${index})">Editar</button>
-                <button class="delete" onclick="deleteBranch(${index})">Eliminar</button>
-            </td>
-        `;
-
-        branchList.appendChild(row);
-    });
 }
 
-// Editar sucursal
-function editBranch(index) {
-    const sucursal = sucursales[index];
-    document.getElementById('branch-name').value = sucursal.nombre;
-    document.getElementById('branch-address').value = sucursal.direccion;
-    document.getElementById('branch-url').value = sucursal.url;
-    document.getElementById('branch-lat').value = sucursal.gps_latitud;
-    document.getElementById('branch-lon').value = sucursal.gps_longitud;
-    document.getElementById('opening-time').value = sucursal.horario_apertura;
-    document.getElementById('closing-time').value = sucursal.horario_cierre;
-
-    editIndex = index;
-    document.getElementById('cancel-edit').style.display = 'block';
+// Función para insertar una sucursal
+async function insertSucursal(sucursal) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/insertSucursal`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams(sucursal)
+        });
+        const data = await response.json();
+        if (data.result === "success") {
+            alert(data.message);
+            getAllSucursales();
+        } else {
+            alert("Error al insertar la sucursal: " + data.message);
+        }
+    } catch (error) {
+        console.error("Error al insertar la sucursal:", error);
+    }
 }
 
-// Cancelar edición
-document.getElementById('cancel-edit').addEventListener('click', function () {
-    editIndex = -1;
-    document.getElementById('branch-form').reset();
-    this.style.display = 'none';
-});
-
-// Eliminar sucursal
-function deleteBranch(index) {
-    sucursales.splice(index, 1);
-    renderBranches();
+// Función para actualizar una sucursal
+async function updateSucursal(sucursal) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/updateSucursal`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams(sucursal)
+        });
+        const data = await response.json();
+        if (data.result === "success") {
+            alert(data.message);
+            getAllSucursales();
+            cancelEdit();
+        } else {
+            alert("Error al actualizar la sucursal: " + data.message);
+        }
+    } catch (error) {
+        console.error("Error al actualizar la sucursal:", error);
+    }
 }
 
-// Buscar sucursal
-document.getElementById('search-input').addEventListener('input', function () {
-    const searchTerm = this.value.toLowerCase();
+// Función para eliminar una sucursal
+async function deleteSucursal(idSucursal) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/deleteSucursal`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({ idSucursal })
+        });
+        const data = await response.json();
+        if (data.result === "success") {
+            alert(data.message);
+            getAllSucursales();
+            cancelEdit();
+        } else {
+            alert("Error al eliminar la sucursal: " + data.message);
+        }
+    } catch (error) {
+        console.error("Error al eliminar la sucursal:", error);
+    }
+}
 
-    const filteredSucursales = sucursales.filter(sucursal =>
-        sucursal.nombre.toLowerCase().includes(searchTerm) ||
-        sucursal.direccion.toLowerCase().includes(searchTerm)
-    );
-
-    const branchList = document.getElementById('branch-list');
-    branchList.innerHTML = '';
-
-    filteredSucursales.forEach((sucursal, index) => {
-        const row = document.createElement('tr');
-
-        row.innerHTML = `
-            <td>${sucursal.nombre}</td>
-            <td>${sucursal.direccion}</td>
-            <td><img src="${sucursal.foto}" alt="Foto" width="50" height="50"></td>
-            <td><a href="${sucursal.url}" target="_blank">${sucursal.url}</td>
-            <td>${sucursal.gps_latitud}</td>
-            <td>${sucursal.gps_longitud}</td>
-            <td>${sucursal.horario_apertura}</td>
-            <td>${sucursal.horario_cierre}</td>
-            <td>
-                <button class="btn btn-info" onclick="editBranch(${index})">Editar</button>
-                <button class="btn btn-danger" onclick="deleteBranch(${index})">Eliminar</button>
-            </td>
-        `;
-
-        branchList.appendChild(row);
-    });
-});
+// Inicialización de la tabla de sucursales
+getAllSucursales();

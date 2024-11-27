@@ -57,20 +57,31 @@
                     <h4>Agregar/Editar Sucursal</h4>
                     <form id="branch-form" enctype="multipart/form-data">
                         <div class="form-group">
+                            <input type="text" id="idSucursal" class="form-control" placeholder="id">
+                        </div>
+                        <div class="form-group">
                             <label for="branch-name">Nombre</label>
                             <input type="text" id="branch-name" class="form-control" placeholder="Nombre" required>
                         </div>
+                        <div class="branch-calle">
+                            <label for="branch-address">Calle</label>
+                            <input type="text" id="branch-calle" class="form-control" placeholder="Calle" required>
+                        </div>
                         <div class="form-group">
-                            <label for="branch-address">Dirección</label>
-                            <input type="text" id="branch-address" class="form-control" placeholder="Dirección" required>
+                            <label for="branch-numcalle">Num calle</label>
+                            <input type="text" id="branch-numcalle" class="form-control" placeholder="NumCalle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="branch-colonia">Colonia</label>
+                            <input type="text" id="branch-colonia" class="form-control" placeholder="Colonia" required>
                         </div>
                         <div class="form-group">
                             <label for="branch-photo">Foto</label>
-                            <input type="file" id="branch-photo" class="form-control" accept="image/*">
+                            <input type="text" id="branch-photo" class="form-control" placeholder="URL de la foto" required>
                         </div>
                         <div class="form-group">
                             <label for="branch-url">URL</label>
-                            <input type="text" id="branch-url" class="form-control" placeholder="URL">
+                            <input type="text" id="branch-url" class="form-control" placeholder="URL" required>
                         </div>
                         <div class="form-group">
                             <label for="branch-lat">GPS Latitud</label>
@@ -81,15 +92,17 @@
                             <input type="text" id="branch-lon" class="form-control" placeholder="GPS Longitud" required>
                         </div>
                         <div>
-                            <label for="opening-time">Horario de Apertura:</label>
-                            <input type="time" id="opening-time" class="form-control">
+                            <label for="branch-city">Ciudad</label>
+                            <input type="text" id="branch-city" class="form-control" placeholder="Ciudad" required>
                         </div>
                         <div>
-                            <label for="closing-time">Horario de Cierre:</label>
-                            <input type="time" id="closing-time" class="form-control">
+                            <label for="branch-time">Horario</label>
+                            <input type="text" id="branch-time" class="form-control" placeholder="Horario" required>
                         </div>
                         <br>
                         <button type="submit" class="save">Guardar</button>
+                        <button type="button" class="edit" id="edit-btn" style="display:none;">Editar</button>
+                        <button type="button" class="delete" id="delete-btn" style="display:none;">Eliminar</button>
                         <button type="button" class="cancel" id="cancel-edit" style="display:none;">Cancelar</button>
                     </form>
 
@@ -110,9 +123,9 @@
                                 <th>URL</th>
                                 <th>GPS_latitud</th>
                                 <th>GPS_longitud</th>
-                                <th>Horario Apertura</th>
-                                <th>Horario Cierre</th>
-                                <th>Acciones</th>
+                                <th>Horarios</th>
+                                <th>Ciudad</th>
+                                <th>Estado</th>
                             </tr>
                         </thead>
                         <tbody id="branch-list">

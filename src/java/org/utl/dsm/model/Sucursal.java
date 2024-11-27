@@ -9,10 +9,12 @@ public class Sucursal {
     private String urlWeb;
     private String horarios;
     private String direccion;
+    private String calle;
+    private String numCalle;
+    private String colonia;
     private String ciudadNombre;
     private String estadoNombre;
 
-    // Getters y Setters
     public int getIdSucursal() {
         return idSucursal;
     }
@@ -92,4 +94,29 @@ public class Sucursal {
     public void setEstadoNombre(String estadoNombre) {
         this.estadoNombre = estadoNombre;
     }
+
+    public String getCalle() {
+        return calle;
+    }
+
+    public String getNumCalle() {
+        return numCalle;
+    }
+
+    public String getColonia() {
+        return colonia;
+    }
+
+    public void setCalle(String calle) {
+        this.calle = calle;
+    }
+
+    public void setNumCalle(String numCalle) {
+        this.numCalle = numCalle;
+    }
+
+    public void setColonia(String colonia) {
+        this.colonia = colonia;
+    }
+    
 }

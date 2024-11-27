@@ -44,10 +44,12 @@ function selectFood(food) {
     document.getElementById('food-category').value = food.categoria.descripcion || '';
     document.getElementById('food-photo').value = food.foto || ''; // Aquí asignamos la URL de la foto
 
+    // Cambiar el comportamiento de los botones
     document.getElementById('delete-btn').style.display = 'inline-block';
+    document.getElementById('edit-btn').style.display = 'inline-block';
     document.getElementById('cancel-edit').style.display = 'inline-block';
+    document.querySelector('.edit').style.display = 'inline-block'; // Mostrar botón de editar
 }
-
 
 function clearForm() {
     selectedFoodId = null;
@@ -55,6 +57,7 @@ function clearForm() {
     document.getElementById('edit-btn').style.display = 'none';
     document.getElementById('delete-btn').style.display = 'none';
     document.getElementById('cancel-edit').style.display = 'none';
+    document.querySelector('.edit').style.display = 'none'; // Ocultar el botón de editar
 }
 
 function saveFood(event) {
@@ -98,7 +101,6 @@ function saveFood(event) {
             .catch(error => console.error('Error al guardar el alimento:', error));
 }
 
-
 function deleteFood() {
     if (!selectedFoodId) {
         alert('No hay ningún alimento seleccionado');
@@ -130,6 +132,7 @@ function deleteFood() {
 document.addEventListener('DOMContentLoaded', () => {
     loadFoodList();
     document.getElementById('food-form').addEventListener('submit', saveFood);
+    document.getElementById('edit-btn').addEventListener('click', saveFood);
     document.getElementById('delete-btn').addEventListener('click', deleteFood);
     document.getElementById('cancel-edit').addEventListener('click', clearForm);
 });

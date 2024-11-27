@@ -38,6 +38,9 @@ public class ControllerSucursal {
         sucursal.setUrlWeb(rs.getString("urlWeb"));
         sucursal.setHorarios(rs.getString("horarios"));
         sucursal.setDireccion(rs.getString("direccion"));
+        sucursal.setCalle(rs.getString("calle"));
+        sucursal.setNumCalle(rs.getString("numCalle"));
+        sucursal.setColonia(rs.getString("colonia"));
         sucursal.setCiudadNombre(rs.getString("CiudadNombre"));
         sucursal.setEstadoNombre(rs.getString("EstadoNombre"));
 
