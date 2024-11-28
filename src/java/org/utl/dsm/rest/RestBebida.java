@@ -14,7 +14,7 @@ import org.utl.dsm.controller.ControllerBebida;
 import org.utl.dsm.model.Producto;
 
 @Path("Bebida")
-public class RestBebidas extends Application {
+public class RestBebida extends Application {
 
     @Path("getAllBebidas")
     @GET
