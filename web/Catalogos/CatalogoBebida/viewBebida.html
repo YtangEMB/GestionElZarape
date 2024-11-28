@@ -57,6 +57,9 @@
                 <h4>Agregar/Editar Bebida</h4>
                 <form id="beverage-form" enctype="multipart/form-data">
                     <div class="form-group">
+                            <input type="text" id="idBebida" class="form-control" placeholder="id" hidden>
+                        </div>
+                    <div class="form-group">
                         <label for="beverage-name">Nombre</label>
                         <input type="text" id="beverage-name" class="form-control" placeholder="Nombre" required>
                     </div>
@@ -69,7 +72,7 @@
                         <input type="text" id="beverage-description" class="form-control" placeholder="Descripción" required>
                     </div>
                     <div class="form-group">
-                        <label for="beverage-photo">Foto</label>
+                        <label for="beverage-photo">Foto (URL)</label>
                         <input type="file" id="beverage-photo" class="form-control" accept="image/*">
                     </div>
                     <div class="form-group">

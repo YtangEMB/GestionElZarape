@@ -12,8 +12,6 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 import org.utl.dsm.controller.ControllerEmpleado;
 import org.utl.dsm.model.Empleado;
-import org.utl.dsm.model.Persona;
-import org.utl.dsm.model.Usuario;
 
 @Path("Empleado")
 public class RestEmpleado extends Application {
@@ -46,23 +44,19 @@ public class RestEmpleado extends Application {
             @FormParam("nombre") String nombre,
             @FormParam("apellidos") String apellidos,
             @FormParam("telefono") String telefono,
-            @FormParam("idCiudad") int idCiudad,
+            @FormParam("nombreCiudad") String nombreCiudad,
             @FormParam("nombreUsuario") String nombreUsuario,
             @FormParam("contrasenia") String contrasenia,
-            @FormParam("idSucursal") int idSucursal,
-            @FormParam("idPersona") int idPersona,
-            @FormParam("idUsuario") int idUsuario,
-            @FormParam("idEmpleado") int idEmpleado
-    ) {
+            @FormParam("nombreSucursal") String nombreSucursal) {
 
         String result;
         ControllerEmpleado ce = new ControllerEmpleado();
 
         try {
-            result = ce.insertEmpleado(nombre, apellidos, telefono, idCiudad, nombreUsuario, contrasenia, idSucursal, idPersona, idUsuario, idEmpleado);
+            result = ce.insertarEmpleado(nombre, apellidos, telefono, nombreCiudad, nombreUsuario, contrasenia, nombreSucursal);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al insertar el empleado\"}";
+            result = "{\"result\":\"Error al insertar al empleado\"}";
         }
 
         return Response.ok(result).build();
@@ -80,10 +74,10 @@ public class RestEmpleado extends Application {
         } catch (Exception e) {
             e.printStackTrace();
             result = "{\"result\":\"Error al eliminar al empleado\"}";
-            return Response.serverError().entity(result).build(); // Respuesta de error
+            return Response.serverError().entity(result).build();
         }
 
-        return Response.ok("{\"result\":\"" + result + "\"}").build(); // Respuesta exitosa
+        return Response.ok("{\"result\":\"" + result + "\"}").build();
     }
 
     @Path("updateEmpleado")
@@ -94,22 +88,21 @@ public class RestEmpleado extends Application {
             @FormParam("nombre") String nombre,
             @FormParam("apellidos") String apellidos,
             @FormParam("telefono") String telefono,
-            @FormParam("idCiudad") int idCiudad,
+            @FormParam("nombreCiudad") String nombreCiudad,
             @FormParam("nombreUsuario") String nombreUsuario,
-            @FormParam("contrsenia") String contrsenia,
-            @FormParam("idSucursal") int idSucursal) {
-
+            @FormParam("contrasenia") String contrasenia,
+            @FormParam("nombreSucursal") String nombreSucursal
+    ) {
         String result;
         ControllerEmpleado ce = new ControllerEmpleado();
 
         try {
-            result = ce.updateEmpleado(idEmpleado, nombre, apellidos, telefono, idCiudad, nombreUsuario, contrsenia, idSucursal);
+            result = ce.updateEmpleado(idEmpleado, nombre, apellidos, telefono, nombreCiudad, nombreUsuario, contrasenia, nombreSucursal);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al actualizar al empleado\"}";
+            result = "{\"result\":\"Error al actualizar el empleado\"}";
         }
 
         return Response.ok(result).build();
     }
-
 }

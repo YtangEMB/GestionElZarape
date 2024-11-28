@@ -56,8 +56,7 @@ public class ControllerEmpleado {
         Empleado empleado = new Empleado();
         Sucursal sucursal = new Sucursal();
 
-        // Asumiendo que los nombres de las columnas en la vista son correctos
-        empleado.setIdEmpleado(rs.getInt("idPersona")); // Asegúrate que idEmpleado corresponde a idPersona
+        empleado.setIdEmpleado(rs.getInt("idPersona")); 
         usuario.setNombre(rs.getString("usuario"));
         persona.setNombre(rs.getString("nombre"));
         persona.setApellidos(rs.getString("apellidos"));
@@ -70,12 +69,12 @@ public class ControllerEmpleado {
         empleado.setPersona(persona);
         empleado.setCiudad(ciudad);
         empleado.setSucursal(sucursal);
-        empleado.setEstado(estado); // Si es necesario, dependiendo de tu diseño
+        empleado.setEstado(estado); 
 
         return empleado;
     }
 
-    public String insertEmpleado(String nombre, String apellidos, String telefono, int idCiudad, String nombreUsuario, String contrasenia, int idSucursal, int idPersona, int idUsuario, int idEmpleado) throws SQLException {
+    public String insertarEmpleado(String nombre, String apellidos, String telefono, String nombreCiudad, String nombreUsuario, String contrasenia, String nombreSucursal) throws SQLException {
         String result = "Empleado insertado correctamente";
 
         ConexionBD connMysql = new ConexionBD();
@@ -86,21 +85,30 @@ public class ControllerEmpleado {
             stmt.setString(1, nombre);
             stmt.setString(2, apellidos);
             stmt.setString(3, telefono);
-            stmt.setInt(4, idCiudad);
+            stmt.setString(4, nombreCiudad);
             stmt.setString(5, nombreUsuario);
             stmt.setString(6, contrasenia);
-            stmt.setInt(7, idSucursal);
-            stmt.setInt(8, idPersona);
-            stmt.setInt(9, idUsuario);
-            stmt.setInt(10, idEmpleado);
+            stmt.setString(7, nombreSucursal);
+
+            stmt.registerOutParameter(8, java.sql.Types.INTEGER); 
+            stmt.registerOutParameter(9, java.sql.Types.INTEGER); 
+            stmt.registerOutParameter(10, java.sql.Types.INTEGER); 
 
             stmt.execute();
+
+            int idPersona = stmt.getInt(8);
+            int idUsuario = stmt.getInt(9);
+            int idEmpleado = stmt.getInt(10);
+
+            result = String.format("{\"result\":\"Empleado insertado\", \"idPersona\": %d, \"idUsuario\": %d, \"idEmpleado\": %d}", idPersona, idUsuario, idEmpleado);
+
         } catch (SQLException e) {
             e.printStackTrace();
             result = "Error al insertar al empleado: " + e.getMessage();
         } finally {
             connMysql.close();
         }
+
         return result;
     }
 
@@ -131,31 +139,33 @@ public class ControllerEmpleado {
         return result;
     }
 
-    public String updateEmpleado(int idEmpleado, String nombre, String apellidos, String telefono, int idCiudad, String nombreUsuario, String contrasenia, int idSucursal) throws SQLException {
+    public String updateEmpleado(int idEmpleado, String nombre, String apellidos, String telefono, 
+                                 String nombreCiudad, String nombreUsuario, String contrasenia, String nombreSucursal) throws SQLException {
         String result = "Empleado actualizado correctamente";
 
         ConexionBD connMysql = new ConexionBD();
         Connection conn = connMysql.open();
 
         String sql = "{CALL updateEmpleado(?, ?, ?, ?, ?, ?, ?, ?)}";
+
         try (CallableStatement stmt = (CallableStatement) conn.prepareCall(sql)) {
             stmt.setInt(1, idEmpleado);
             stmt.setString(2, nombre);
             stmt.setString(3, apellidos);
             stmt.setString(4, telefono);
-            stmt.setInt(5, idCiudad);
-            stmt.setString(6, nombreUsuario);
-            stmt.setString(7, contrasenia);
-            stmt.setInt(8, idSucursal);
+            stmt.setString(5, nombreCiudad); 
+            stmt.setString(6, nombreUsuario); 
+            stmt.setString(7, contrasenia);   
+            stmt.setString(8, nombreSucursal); 
 
             stmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-            result = "Error al actualizar al empleado: " + e.getMessage();
+            result = "Error al actualizar el empleado: " + e.getMessage();
         } finally {
             connMysql.close();
         }
+
         return result;
     }
-
 }
