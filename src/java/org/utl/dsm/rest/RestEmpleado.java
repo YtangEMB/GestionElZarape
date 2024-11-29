@@ -9,12 +9,16 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.utl.dsm.controller.ControllerEmpleado;
 import org.utl.dsm.model.Empleado;
 
 @Path("Empleado")
 public class RestEmpleado extends Application {
+    
+    private final Gson gson = new Gson();
 
     @Path("getAllEmpleado")
     @GET
@@ -48,18 +52,20 @@ public class RestEmpleado extends Application {
             @FormParam("nombreUsuario") String nombreUsuario,
             @FormParam("contrasenia") String contrasenia,
             @FormParam("nombreSucursal") String nombreSucursal) {
-
-        String result;
-        ControllerEmpleado ce = new ControllerEmpleado();
-
+        
+        Map<String, String> response = new HashMap<>();
         try {
-            result = ce.insertarEmpleado(nombre, apellidos, telefono, nombreCiudad, nombreUsuario, contrasenia, nombreSucursal);
+            ControllerEmpleado ce = new ControllerEmpleado();
+            String result = ce.insertarEmpleado(nombre, apellidos, telefono, nombreCiudad, nombreUsuario, contrasenia, nombreSucursal);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al insertar al empleado\"}";
+            response.put("result", "error");
+            response.put("message", "Error al insertar la sucursal: " + e.getMessage());
         }
 
-        return Response.ok(result).build();
+        return Response.ok(gson.toJson(response)).build();
     }
 
     @Path("deleteEmpleado")
@@ -93,16 +99,18 @@ public class RestEmpleado extends Application {
             @FormParam("contrasenia") String contrasenia,
             @FormParam("nombreSucursal") String nombreSucursal
     ) {
-        String result;
-        ControllerEmpleado ce = new ControllerEmpleado();
-
+        Map<String, String> response = new HashMap<>();
         try {
-            result = ce.updateEmpleado(idEmpleado, nombre, apellidos, telefono, nombreCiudad, nombreUsuario, contrasenia, nombreSucursal);
+            ControllerEmpleado ce = new ControllerEmpleado();
+            String result = ce.updateEmpleado(idEmpleado, nombre, apellidos, telefono, nombreCiudad, nombreUsuario, contrasenia, nombreSucursal);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al actualizar el empleado\"}";
+            response.put("result", "error");
+            response.put("message", "Error al actualizar la sucursal: " + e.getMessage());
         }
 
-        return Response.ok(result).build();
+        return Response.ok(gson.toJson(response)).build();
     }
 }

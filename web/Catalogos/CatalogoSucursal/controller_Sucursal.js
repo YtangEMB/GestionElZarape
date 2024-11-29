@@ -159,4 +159,25 @@ async function deleteSucursal(idSucursal) {
     }
 }
 
+document.getElementById('search-input').addEventListener('input', function () {
+    const searchTerm = this.value.toLowerCase();
+    filterSucursalesList(searchTerm);
+});
+
+function filterSucursalesList(searchTerm) {
+    const SucursalesList = document.getElementById('branch-list');
+    const rows = SucursalesList.getElementsByTagName('tr');
+
+    Array.from(rows).forEach(row => {
+        const SucursalName = row.cells[0].textContent.toLowerCase();
+        const SucursalD = row.cells[1].textContent.toLowerCase();
+
+        if (SucursalName.includes(searchTerm) || SucursalD.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
 getAllSucursales();

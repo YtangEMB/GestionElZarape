@@ -1,128 +1,172 @@
-let usuarios = [];
-let editIndex = -1;
+const API_BASE_URL = "http://localhost:8080/GestionElZarape/api/Empleado";
+let selectedEmployeeId = null;
 
-// Cargar usuarios desde el archivo JSON al iniciar
-fetch('usuarios.json')
-    .then(response => response.json())
-    .then(data => {
-        usuarios = data;
-        renderUsers();
-    });
-
-// Guardar o actualizar usuario
-document.getElementById('user-form').addEventListener('submit', function (event) {
-    event.preventDefault();
-
-    const usuario = {
-        id: document.getElementById('user-id').value,
-        nombre: document.getElementById('user-name').value,
-        apellido_paterno: document.getElementById('user-lastname').value,
-        apellido_materno: document.getElementById('user-mother-lastname').value,
-        telefono: document.getElementById('user-phone').value,
-        ciudad: document.getElementById('user-city').value,
-        estado: document.getElementById('user-state').value,
-        domicilio: document.getElementById('user-address').value
-    };
-
-    if (editIndex === -1) {
-        usuarios.push(usuario);
-    } else {
-        usuarios[editIndex] = usuario;
-        editIndex = -1;
-        document.getElementById('cancel-edit').style.display = 'none';
-    }
-
-    renderUsers();
-    document.getElementById('user-form').reset();
-});
-
-// Renderizar lista de usuarios
-function renderUsers() {
-    const userList = document.getElementById('user-list');
-    userList.innerHTML = '';
-
-    usuarios.forEach((usuario, index) => {
-        const row = document.createElement('tr');
-
-        row.innerHTML = `
-            <td>${usuario.id}</td>
-            <td>${usuario.nombre}</td>
-            <td>${usuario.apellido_paterno}</td>
-            <td>${usuario.apellido_materno}</td>
-            <td>${usuario.telefono}</td>
-            <td>${usuario.ciudad}</td>
-            <td>${usuario.estado}</td>
-            <td>${usuario.domicilio}</td>
-            <td>
-                <button class="edit" onclick="editUser(${index})">Editar</button>
-                <button class="delete" onclick="deleteUser(${index})">Eliminar</button>
-            </td>
-        `;
-
-        userList.appendChild(row);
-    });
+function renderEmployeeList(empleados) {
+    const userList = document.getElementById("user-list");
+    userList.innerHTML = empleados.map(empleado => `
+        <tr data-id="${empleado.idEmpleado}" onclick="selectEmployee(${empleado.idEmpleado})">
+            <td>${empleado.usuario.nombre}</td>
+            <td>${empleado.persona.nombre}</td>
+            <td>${empleado.persona.apellidos}</td>
+            <td>${empleado.persona.telefono}</td>
+            <td>${empleado.ciudad.nombre}</td>
+            <td>${empleado.sucursal.nombre}</td>
+            <td>${empleado.estado.nombre}</td>
+        </tr>
+    `).join("");
 }
 
-// Editar usuario
-function editUser(index) {
-    const usuario = usuarios[index];
-    document.getElementById('user-id').value = usuario.id;
-    document.getElementById('user-name').value = usuario.nombre;
-    document.getElementById('user-lastname').value = usuario.apellido_paterno;
-    document.getElementById('user-mother-lastname').value = usuario.apellido_materno;
-    document.getElementById('user-phone').value = usuario.telefono;
-    document.getElementById('user-city').value = usuario.ciudad;
-    document.getElementById('user-state').value = usuario.estado;
-    document.getElementById('user-address').value = usuario.domicilio;
+// Cargar empleado seleccionado
+function loadEmployee(idEmpleado) {
+    selectedEmployeeId = idEmpleado;
+    const row = document.querySelector(`#user-list tr[data-id="${idEmpleado}"]`);
+    
+    document.getElementById("idPersona").value = idEmpleado;
+    document.getElementById("user-user").value = row.cells[0].textContent;
+    document.getElementById("user-name").value = row.cells[1].textContent;
+    document.getElementById("user-lastname").value = row.cells[2].textContent;
+    document.getElementById("user-phone").value = row.cells[3].textContent;
+    document.getElementById("user-city").value = row.cells[4].textContent;
+    document.getElementById("user-branch").value = row.cells[5].textContent;
 
-    editIndex = index;
-    document.getElementById('cancel-edit').style.display = 'block';
+    showActionButtons(idEmpleado);
+}
+
+// Seleccionar empleado
+function selectEmployee(idEmpleado) {
+    loadEmployee(idEmpleado);
+}
+
+// Mostrar botones de acción
+function showActionButtons(idEmpleado) {
+    document.getElementById("edit-btn").style.display = "inline-block";
+    document.getElementById("delete-btn").style.display = "inline-block";
+    document.getElementById("cancel-edit").style.display = "inline-block";
+
+    document.getElementById("edit-btn").onclick = () => updateEmployee({
+        idEmpleado: selectedEmployeeId,
+        nombre: document.getElementById("user-name").value,
+        apellidos: document.getElementById("user-lastname").value,
+        telefono: document.getElementById("user-phone").value,
+        nombreCiudad: document.getElementById("user-city").value,
+        nombreUsuario: document.getElementById("user-user").value,
+        nombreSucursal: document.getElementById("user-branch").value,
+    });
+
+    document.getElementById("delete-btn").onclick = () => deleteEmployee(selectedEmployeeId);
+    document.getElementById("cancel-edit").onclick = () => cancelEdit();
 }
 
 // Cancelar edición
-document.getElementById('cancel-edit').addEventListener('click', function () {
-    editIndex = -1;
-    document.getElementById('user-form').reset();
-    this.style.display = 'none';
-});
-
-// Eliminar usuario
-function deleteUser(index) {
-    usuarios.splice(index, 1);
-    renderUsers();
+function cancelEdit() {
+    selectedEmployeeId = null;
+    document.getElementById("user-form").reset();
+    document.getElementById("edit-btn").style.display = "none";
+    document.getElementById("delete-btn").style.display = "none";
+    document.getElementById("cancel-edit").style.display = "none";
 }
 
-// Buscar usuario
+// Obtener todos los empleados
+async function getAllEmployees() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/getAllEmpleado`);
+        const empleados = await response.json();
+        renderEmployeeList(empleados);
+    } catch (error) {
+        console.error("Error al cargar empleados:", error);
+    }
+}
+
+// Insertar empleado
+async function insertEmployee(empleado) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/insertEmpleado`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams(empleado)
+        });
+        const data = await response.json();
+        alert(data.message || "Empleado guardado correctamente");
+        getAllEmployees();
+    } catch (error) {
+        console.error("Error al insertar empleado:", error);
+    }
+}
+
+document.getElementById("user-form").addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevenir el envío normal del formulario
+    
+    const empleado = {
+        nombreUsuario: document.getElementById("user-user").value,
+        nombre: document.getElementById("user-name").value,
+        apellidos: document.getElementById("user-lastname").value,
+        telefono: document.getElementById("user-phone").value,
+        nombreCiudad: document.getElementById("user-city").value,
+        nombreSucursal: document.getElementById("user-branch").value,
+    };
+
+    insertEmployee(empleado);
+});
+
+
+// Actualizar empleado
+async function updateEmployee(empleado) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/updateEmpleado`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams(empleado)
+        });
+        const data = await response.json();
+        alert(data.message || "Empleado actualizado correctamente");
+        getAllEmployees();
+        cancelEdit();
+    } catch (error) {
+        console.error("Error al actualizar empleado:", error);
+    }
+}
+
+// Eliminar empleado
+async function deleteEmployee(idEmpleado) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/deleteEmpleado`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ idEmpleado }),
+        });
+        const data = await response.json();
+        alert(data.message || "Empleado eliminado correctamente");
+        getAllEmployees();
+        cancelEdit();
+    } catch (error) {
+        console.error("Error al eliminar empleado:", error);
+    }
+}
+
 document.getElementById('search-input').addEventListener('input', function () {
     const searchTerm = this.value.toLowerCase();
-
-    const filteredUsuarios = usuarios.filter(usuario =>
-        usuario.nombre.toLowerCase().includes(searchTerm) ||
-        usuario.apellido_paterno.toLowerCase().includes(searchTerm) ||
-        usuario.apellido_materno.toLowerCase().includes(searchTerm)
-    );
-
-    const userList = document.getElementById('user-list');
-    userList.innerHTML = '';
-
-    filteredUsuarios.forEach((usuario, index) => {
-        const row = document.createElement('tr');
-
-        row.innerHTML = `
-            <td>${usuario.id}</td>
-            <td>${usuario.nombre}</td>
-            <td>${usuario.apellido_paterno}</td>
-            <td>${usuario.apellido_materno}</td>
-            <td>${usuario.telefono}</td>
-            <td>${usuario.ciudad}</td>
-            <td>${usuario.estado}</td>
-            <td>${usuario.domicilio}</td>
-            <td>
-                <button class="btn btn-info" onclick="editUser(${index})">Editar</button>
-                <button class="btn btn-danger" onclick="deleteUser(${index})">Eliminar</button>
-            </td>
-        `;
-
-        userList.appendChild(row);
-    });
+    filterEmpleadosList(searchTerm);
 });
+
+function filterEmpleadosList(searchTerm) {
+    const EmpleadosList = document.getElementById('user-list');
+    const rows = EmpleadosList.getElementsByTagName('tr');
+
+    Array.from(rows).forEach(row => {
+        const EmpleadoName = row.cells[1].textContent.toLowerCase();
+        const EmpleadoUser = row.cells[0].textContent.toLowerCase();
+
+        if (EmpleadoName.includes(searchTerm) || EmpleadoUser.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Inicializar la carga de empleados
+getAllEmployees();

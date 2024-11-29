@@ -78,6 +78,7 @@
                     <div class="form-group">
                         <label for="beverage-category">Categoría</label>
                         <select id="beverage-category" class="form-select" required>
+                            <option value="" disabled selected>Selecciona una categoría</option>
                             <option value="Fria">Fria</option>
                             <option value="Caliente">Caliente</option>
                             <option value="Refresco">Refresco</option>
@@ -93,7 +94,7 @@
             <div class="container-table col-md-10">
                 <br><h4>Buscar Bebida</h4>
                 <div class="form-group col-md-5">
-                    <input type="text" id="search-input" class="form-control" placeholder="Buscar bebida por nombre o descripción">
+                    <input type="text" id="search-input" class="form-control" placeholder="Buscar bebida por nombre o categoria">
                 </div>
                 <br><h4>Lista de Bebidas</h4>
                 <div class="table-responsive">
