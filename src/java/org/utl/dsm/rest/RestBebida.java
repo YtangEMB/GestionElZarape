@@ -9,12 +9,16 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.utl.dsm.controller.ControllerBebida;
 import org.utl.dsm.model.Producto;
 
 @Path("Bebida")
 public class RestBebida extends Application {
+    
+    private final Gson gson = new Gson();
 
     @Path("getAllBebidas")
     @GET
@@ -47,34 +51,38 @@ public class RestBebida extends Application {
             @FormParam("precio") int precio,
             @FormParam("categoria") String categoria) {
         
-        String result;
-        ControllerBebida ca = new ControllerBebida();
+        Map<String, String> response = new HashMap<>();
         
         try {
-            result = ca.insertBebida(nombre, descripcion, foto, precio, categoria);
+            ControllerBebida ca = new ControllerBebida();
+            String result = ca.insertBebida(nombre, descripcion, foto, precio, categoria);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al insertar la Bebida\"}";
+            response.put("result", "error");
+            response.put("message", "Error al insertar el alimento");
         }
-        
-        return Response.ok(result).build();
+        return Response.ok(gson.toJson(response)).build();
     }
     
     @Path("deleteBebida")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteBebida(@FormParam("idProducto") int idProducto) {
-        String result;
-        ControllerBebida ca = new ControllerBebida();
-        
+        Map<String, String> response = new HashMap<>();
         try {
-            result = ca.deleteBebida(idProducto);
+            ControllerBebida ca = new ControllerBebida();
+            String result = ca.deleteBebida(idProducto);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al eliminar el alimento\"}";
+            response.put("result", "error");
+            response.put("message", "Error al eliminar el alimento");
         }
         
-        return Response.ok(result).build();
+        return Response.ok(gson.toJson(response)).build();
     }
     
     @Path("updateBebida")
@@ -88,17 +96,19 @@ public class RestBebida extends Application {
             @FormParam("precio") int precio,
             @FormParam("categoria") String categoria) {
 
-        String result;
-        ControllerBebida ca = new ControllerBebida();
-
+        Map<String, String> response = new HashMap<>();
         try {
-            result = ca.updateBebida(idProducto, nombre, descripcion, foto, precio, categoria);
+            ControllerBebida ca = new ControllerBebida();
+            String result = ca.updateBebida(idProducto, nombre, descripcion, foto, precio, categoria);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al actualizar la Bebida\"}";
+            response.put("result", "error");
+            response.put("message", "Error al actualizar el alimento");
         }
 
-        return Response.ok(result).build();
+        return Response.ok(gson.toJson(response)).build();
     }
 }
 

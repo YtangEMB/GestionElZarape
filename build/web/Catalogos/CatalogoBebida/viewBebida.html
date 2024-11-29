@@ -69,22 +69,24 @@
                     </div>
                     <div class="form-group">
                         <label for="beverage-description">Descripción</label>
-                        <input type="text" id="beverage-description" class="form-control" placeholder="Descripción" required>
+                        <textarea id="beverage-description" class="form-control" placeholder="Descripción" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="beverage-photo">Foto (URL)</label>
-                        <input type="file" id="beverage-photo" class="form-control" accept="image/*">
+                        <input type="text" id="beverage-photo" class="form-control" placeholder="URL de la foto" required>
                     </div>
                     <div class="form-group">
                         <label for="beverage-category">Categoría</label>
                         <select id="beverage-category" class="form-select" required>
-                            <option value="Fría">Fría</option>
+                            <option value="Fria">Fria</option>
                             <option value="Caliente">Caliente</option>
                             <option value="Refresco">Refresco</option>
                         </select>
                     </div>
                     <br>
                     <button type="submit" class="save">Guardar</button>
+                    <button type="button" class="edit" id="edit-btn" style="display:none;">Editar</button>
+                    <button type="button" class="delete" id="delete-btn" style="display:none;">Eliminar</button>
                     <button type="button" class="cancel" id="cancel-edit" style="display:none;">Cancelar</button>
                 </form>
             </div>
@@ -103,7 +105,6 @@
                             <th>Descripción</th>
                             <th>Foto</th>
                             <th>Categoría</th>
-                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="beverage-list">

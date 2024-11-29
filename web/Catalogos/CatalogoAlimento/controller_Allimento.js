@@ -30,9 +30,8 @@ function loadFoodList() {
                     row.addEventListener('click', () => selectFood(food));
                     foodList.appendChild(row);
                 });
-
             })
-            .catch(error => console.error('Error al cargar los alimentos:', error));
+            .catch(error => console.error('Error al cargar las bebidas:', error));
 }
 
 function selectFood(food) {
@@ -42,13 +41,12 @@ function selectFood(food) {
     document.getElementById('food-price').value = food.precio || '';
     document.getElementById('food-description').value = food.descripcion || '';
     document.getElementById('food-category').value = food.categoria.descripcion || '';
-    document.getElementById('food-photo').value = food.foto || ''; // Aquí asignamos la URL de la foto
+    document.getElementById('food-photo').value = food.foto || ''; 
 
-    // Cambiar el comportamiento de los botones
     document.getElementById('delete-btn').style.display = 'inline-block';
     document.getElementById('edit-btn').style.display = 'inline-block';
     document.getElementById('cancel-edit').style.display = 'inline-block';
-    document.querySelector('.edit').style.display = 'inline-block'; // Mostrar botón de editar
+    document.querySelector('.edit').style.display = 'inline-block'; 
 }
 
 function clearForm() {
@@ -57,7 +55,7 @@ function clearForm() {
     document.getElementById('edit-btn').style.display = 'none';
     document.getElementById('delete-btn').style.display = 'none';
     document.getElementById('cancel-edit').style.display = 'none';
-    document.querySelector('.edit').style.display = 'none'; // Ocultar el botón de editar
+    document.querySelector('.edit').style.display = 'none';
 }
 
 function saveFood(event) {
@@ -67,7 +65,7 @@ function saveFood(event) {
         idProducto: selectedFoodId,
         nombre: document.getElementById('food-name').value.trim(),
         descripcion: document.getElementById('food-description').value.trim(),
-        foto: document.getElementById('food-photo').value.trim(), // Tomar URL de la foto
+        foto: document.getElementById('food-photo').value.trim(),
         precio: parseFloat(document.getElementById('food-price').value),
         categoria: document.getElementById('food-category').value.trim(),
     };
