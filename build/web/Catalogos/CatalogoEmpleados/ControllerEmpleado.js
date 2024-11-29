@@ -12,6 +12,7 @@ function renderEmployeeList(empleados) {
             <td>${empleado.ciudad.nombre}</td>
             <td>${empleado.sucursal.nombre}</td>
             <td>${empleado.estado.nombre}</td>
+            <td style="visibility: hidden; display: none;">${empleado.usuario.contrasenia}</td>
         </tr>
     `).join("");
 }
@@ -28,6 +29,7 @@ function loadEmployee(idEmpleado) {
     document.getElementById("user-phone").value = row.cells[3].textContent;
     document.getElementById("user-city").value = row.cells[4].textContent;
     document.getElementById("user-branch").value = row.cells[5].textContent;
+    document.getElementById("user-password").value = row.cells[7].textContent;
 
     showActionButtons(idEmpleado);
 }
@@ -50,6 +52,7 @@ function showActionButtons(idEmpleado) {
         telefono: document.getElementById("user-phone").value,
         nombreCiudad: document.getElementById("user-city").value,
         nombreUsuario: document.getElementById("user-user").value,
+        contrasenia: document.getElementById("user-password").value,
         nombreSucursal: document.getElementById("user-branch").value,
     });
 
@@ -96,7 +99,7 @@ async function insertEmployee(empleado) {
 }
 
 document.getElementById("user-form").addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevenir el envío normal del formulario
+    event.preventDefault();
     
     const empleado = {
         nombreUsuario: document.getElementById("user-user").value,
@@ -104,6 +107,7 @@ document.getElementById("user-form").addEventListener("submit", function (event)
         apellidos: document.getElementById("user-lastname").value,
         telefono: document.getElementById("user-phone").value,
         nombreCiudad: document.getElementById("user-city").value,
+        contrasenia: document.getElementById("user-password").value,
         nombreSucursal: document.getElementById("user-branch").value,
     };
 

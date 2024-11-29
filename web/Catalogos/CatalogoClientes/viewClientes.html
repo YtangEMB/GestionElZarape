@@ -57,20 +57,19 @@
                     <h4>Agregar/Editar Cliente</h4>
                     <form id="user-form" enctype="multipart/form-data">
                         <div class="form-group">
+                            <input type="text" id="idPersona" class="form-control" placeholder="id" hidden>
+                        </div>
+                        <div class="form-group">
                             <label for="user-id">Usuario</label>
-                            <input type="text" id="user-id" class="form-control" placeholder="Usuario" required>
+                            <input type="text" id="user-user" class="form-control" placeholder="Usuario" required>
                         </div>
                         <div class="form-group">
                             <label for="user-name">Nombre</label>
                             <input type="text" id="user-name" class="form-control" placeholder="Nombre" required>
                         </div>
                         <div class="form-group">
-                            <label for="user-lastname">Apellido Paterno</label>
-                            <input type="text" id="user-lastname" class="form-control" placeholder="Apellido Paterno" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="user-mother-lastname">Apellido Materno</label>
-                            <input type="text" id="user-mother-lastname" class="form-control" placeholder="Apellido Materno" required>
+                            <label for="user-lastname">Apellidos</label>
+                            <input type="text" id="user-lastname" class="form-control" placeholder="Apellidos" required>
                         </div>
                         <div class="form-group">
                             <label for="user-phone">Teléfono</label>
@@ -80,23 +79,17 @@
                             <label for="user-city">Ciudad</label>
                             <input type="text" id="user-city" class="form-control" placeholder="Ciudad" required>
                         </div>
-                        <div class="form-group">
-                            <label for="user-state">Estado</label>
-                            <input type="text" id="user-state" class="form-control" placeholder="Estado" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="user-address">Domicilio</label>
-                            <input type="text" id="user-address" class="form-control" placeholder="Domicilio" required>
-                        </div>
                         <br>
                         <button type="submit" class="save">Guardar</button>
+                        <button type="button" class="edit" id="edit-btn" style="display:none;">Editar</button>
+                        <button type="button" class="delete" id="delete-btn" style="display:none;">Eliminar</button>
                         <button type="button" class="cancel" id="cancel-edit" style="display:none;">Cancelar</button>
                     </form>
                 </div>
                 <div class="container-table col-md-10">
                     <br><h4>Buscar Cliente</h4>
                     <div class="form-group col-md-5">
-                        <input type="text" id="search-input" class="form-control" placeholder="Buscar usuario por nombre o apellido">
+                        <input type="text" id="search-input" class="form-control" placeholder="Buscar cliente por usuario o nombre">
                     </div>
                     <br><h4>Lista de Clientes</h4>
                     <div class="table-responsive">
@@ -105,13 +98,10 @@
                             <tr>
                                 <th>Usuario</th>
                                 <th>Nombre</th>
-                                <th>Apellido Paterno</th>
-                                <th>Apellido Materno</th>
+                                <th>Apellidos</th>
                                 <th>Teléfono</th>
                                 <th>Ciudad</th>
                                 <th>Estado</th>
-                                <th>Domicilio</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="user-list">

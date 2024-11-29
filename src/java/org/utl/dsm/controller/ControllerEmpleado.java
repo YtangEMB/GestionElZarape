@@ -56,8 +56,9 @@ public class ControllerEmpleado {
         Empleado empleado = new Empleado();
         Sucursal sucursal = new Sucursal();
 
-        empleado.setIdEmpleado(rs.getInt("idPersona")); 
+        empleado.setIdEmpleado(rs.getInt("idEmpleado"));
         usuario.setNombre(rs.getString("usuario"));
+        usuario.setContrasenia(rs.getString("contrasenia"));
         persona.setNombre(rs.getString("nombre"));
         persona.setApellidos(rs.getString("apellidos"));
         persona.setTelefono(rs.getString("telefono"));
