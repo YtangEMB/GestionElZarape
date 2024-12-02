@@ -17,7 +17,7 @@ function renderCustomersList(clientes) {
 }
 
 function loadCustomer(idCliente) {
-    selectedEmployeeId = idCliente;
+    selectedCustomerId = idCliente;
     const row = document.querySelector(`#user-list tr[data-id="${idCliente}"]`);
     
     document.getElementById("idCliente").value = idCliente;
@@ -109,24 +109,23 @@ async function updateCustomer(cliente) {
 }
 
 async function deleteCustomer(idCliente) {
-    if (!confirm("¿Estás seguro de que deseas eliminar este cliente?")) {
-        return; // Si el usuario cancela, no hacer nada
-    }
-
     try {
         const response = await fetch(`${API_BASE_URL}/deleteCliente`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: new URLSearchParams({ idCliente })
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ idCliente }),
         });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
         alert(data.message || "Cliente eliminado correctamente");
         getAllCustomer();
-        cancelEdit(); 
     } catch (error) {
         console.error("Error al eliminar cliente:", error);
+        alert("Error al eliminar el cliente. Por favor, verifica la consola para más detalles.");
     }
 }
 
