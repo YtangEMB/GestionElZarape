@@ -56,8 +56,9 @@ public class ControllerCliente {
         Estado estado = new Estado();
         Cliente cliente = new Cliente();
 
-        cliente.setIdCliente(rs.getInt("idPersona")); 
+        cliente.setIdCliente(rs.getInt("idCliente")); 
         usuario.setNombre(rs.getString("usuario"));
+        usuario.setContrasenia(rs.getString("contrasenia"));
         persona.setNombre(rs.getString("nombre"));
         persona.setApellidos(rs.getString("apellidos"));
         persona.setTelefono(rs.getString("telefono"));

@@ -38,7 +38,7 @@ public class ControllerAlimento {
         producto.setNombre(rs.getString("nombre"));
         producto.setDescripcion(rs.getString("descripcion"));
         producto.setFoto(rs.getString("foto"));
-        producto.setPrecio(rs.getDouble("precio"));
+        producto.setPrecio(rs.getInt("precio"));
         producto.setCategoria(categoria);
 
         return producto;
@@ -112,5 +112,4 @@ public class ControllerAlimento {
         }
         return result;
     }
-    
 }

@@ -9,12 +9,16 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.utl.dsm.controller.ControllerCliente;
 import org.utl.dsm.model.Cliente;
 
 @Path("Cliente")
 public class RestCliente extends Application {
+    
+    private final Gson gson = new Gson();
 
     @Path("getAllCliente")
     @GET
@@ -47,36 +51,39 @@ public class RestCliente extends Application {
             @FormParam("nombreCiudad") String nombreCiudad,
             @FormParam("nombreUsuario") String nombreUsuario,
             @FormParam("contrasenia") String contrasenia) {
-
-        String result;
-        ControllerCliente ce = new ControllerCliente();
-
+        
+        Map<String, String> response = new HashMap<>();
         try {
-            result = ce.insertarCliente(nombre, apellidos, telefono, nombreCiudad, nombreUsuario, contrasenia);
+            ControllerCliente ce = new ControllerCliente();
+            String result = ce.insertarCliente(nombre, apellidos, telefono, nombreCiudad, nombreUsuario, contrasenia);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al insertar al cliente\"}";
+            response.put("result", "error");
+            response.put("message", "Error al insertar la sucursal: " + e.getMessage());
         }
 
-        return Response.ok(result).build();
+        return Response.ok(gson.toJson(response)).build();
     }
 
     @Path("deleteCliente")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCliente(@FormParam("idCliente") int idCliente) {
-        String result;
-        ControllerCliente ce = new ControllerCliente();
-
+        Map<String, String> response = new HashMap<>();
         try {
-            result = ce.deleteCliente(idCliente);
+            ControllerCliente ce = new ControllerCliente();
+            String result = ce.deleteCliente(idCliente);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al eliminar al cliente\"}";
-            return Response.serverError().entity(result).build();
+            response.put("result", "error");
+            response.put("message", "Error al insertar la sucursal: " + e.getMessage());
         }
 
-        return Response.ok("{\"result\":\"" + result + "\"}").build();
+        return Response.ok(gson.toJson(response)).build();
     }
 
     @Path("updateCliente")
@@ -91,16 +98,18 @@ public class RestCliente extends Application {
             @FormParam("nombreUsuario") String nombreUsuario,
             @FormParam("contrasenia") String contrasenia
     ) {
-        String result;
-        ControllerCliente cc = new ControllerCliente();
-
+        Map<String, String> response = new HashMap<>();
         try {
-            result = cc.updateCliente(idCliente, nombre, apellidos, telefono, nombreCiudad, nombreUsuario, contrasenia);
+            ControllerCliente cc = new ControllerCliente();
+            String result = cc.updateCliente(idCliente, nombre, apellidos, telefono, nombreCiudad, nombreUsuario, contrasenia);
+            response.put("result", "success");
+            response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
-            result = "{\"result\":\"Error al actualizar el cliente\"}";
+            response.put("result", "error");
+            response.put("message", "Error al actualizar la sucursal: " + e.getMessage());
         }
 
-        return Response.ok(result).build();
+        return Response.ok(gson.toJson(response)).build();
     }
 }
