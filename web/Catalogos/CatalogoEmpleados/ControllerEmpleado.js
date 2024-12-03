@@ -17,7 +17,6 @@ function renderEmployeeList(empleados) {
     `).join("");
 }
 
-// Cargar empleado seleccionado
 function loadEmployee(idEmpleado) {
     selectedEmployeeId = idEmpleado;
     const row = document.querySelector(`#user-list tr[data-id="${idEmpleado}"]`);
@@ -34,12 +33,10 @@ function loadEmployee(idEmpleado) {
     showActionButtons(idEmpleado);
 }
 
-// Seleccionar empleado
 function selectEmployee(idEmpleado) {
     loadEmployee(idEmpleado);
 }
 
-// Mostrar botones de acción
 function showActionButtons(idEmpleado) {
     document.getElementById("edit-btn").style.display = "inline-block";
     document.getElementById("delete-btn").style.display = "inline-block";
@@ -60,7 +57,6 @@ function showActionButtons(idEmpleado) {
     document.getElementById("cancel-edit").onclick = () => cancelEdit();
 }
 
-// Cancelar edición
 function cancelEdit() {
     selectedEmployeeId = null;
     document.getElementById("user-form").reset();
@@ -69,7 +65,6 @@ function cancelEdit() {
     document.getElementById("cancel-edit").style.display = "none";
 }
 
-// Obtener todos los empleados
 async function getAllEmployees() {
     try {
         const response = await fetch(`${API_BASE_URL}/getAllEmpleado`);
@@ -80,7 +75,6 @@ async function getAllEmployees() {
     }
 }
 
-// Insertar empleado
 async function insertEmployee(empleado) {
     try {
         const response = await fetch(`${API_BASE_URL}/insertEmpleado`, {
@@ -115,7 +109,6 @@ document.getElementById("user-form").addEventListener("submit", function (event)
 });
 
 
-// Actualizar empleado
 async function updateEmployee(empleado) {
     try {
         const response = await fetch(`${API_BASE_URL}/updateEmpleado`, {
@@ -134,7 +127,6 @@ async function updateEmployee(empleado) {
     }
 }
 
-// Eliminar empleado
 async function deleteEmployee(idEmpleado) {
     try {
         const response = await fetch(`${API_BASE_URL}/deleteEmpleado`, {
@@ -172,5 +164,4 @@ function filterEmpleadosList(searchTerm) {
     });
 }
 
-// Inicializar la carga de empleados
 getAllEmployees();

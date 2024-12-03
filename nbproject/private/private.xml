@@ -3,11 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/ytang/Documents/NetBeansProjects/GestionElZarape/src/java/org/utl/dsm/rest/RestAlimento.java</file>
-            <file>file:/C:/Users/ytang/Documents/NetBeansProjects/GestionElZarape/src/java/org/utl/dsm/controller/ControllerAlimento.java</file>
-            <file>file:/C:/Users/ytang/Documents/NetBeansProjects/GestionElZarape/src/java/org/utl/dsm/controller/ControllerCliente.java</file>
-            <file>file:/C:/Users/ytang/Documents/NetBeansProjects/GestionElZarape/web/Catalogos/CatalogoEmpleados/ControllerEmpleado.js</file>
-            <file>file:/C:/Users/ytang/Documents/NetBeansProjects/GestionElZarape/src/java/org/utl/dsm/model/Categoria.java</file>
+            <file>file:/C:/Users/ytang/Documents/NetBeansProjects/GestionElZarape/src/java/org/utl/dsm/controller/ControllerEmpleado.java</file>
+            <file>file:/C:/Users/ytang/Documents/NetBeansProjects/GestionElZarape/web/index.html</file>
+            <file>file:/C:/Users/ytang/Documents/NetBeansProjects/GestionElZarape/src/java/org/utl/dsm/rest/RestEmpleado.java</file>
         </group>
     </open-files>
 </project-private>
