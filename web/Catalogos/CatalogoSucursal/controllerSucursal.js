@@ -115,6 +115,25 @@ async function insertSucursal(sucursal) {
     }
 }
 
+document.getElementById("branch-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    
+    const sucursal = {
+        nombre: document.getElementById("branch-name").value,
+        latitud: document.getElementById("branch-lat").value,
+        longitud: document.getElementById("branch-lon").value,
+        foto: document.getElementById("branch-photo").value,
+        urlWeb: document.getElementById("branch-url").value,
+        horarios: document.getElementById("branch-time").value,
+        calle: document.getElementById("branch-calle").value,
+        numCalle: document.getElementById("branch-numcalle").value,
+        colonia: document.getElementById("branch-colonia").value,
+        nombreCiudad: document.getElementById("branch-city").value
+    };
+
+    insertSucursal(sucursal);
+});
+
 async function updateSucursal(sucursal) {
     try {
         const response = await fetch(`${API_BASE_URL}/updateSucursal`, {
