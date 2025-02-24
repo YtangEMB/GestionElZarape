@@ -1,3 +1,4 @@
+validateToken();
 const API_BASE_URL = "http://localhost:8080/GestionElZarape/api/Sucursal";
 let selectedBranchId = null;
 
