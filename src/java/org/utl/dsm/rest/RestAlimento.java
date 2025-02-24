@@ -9,15 +9,17 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.Provider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.utl.dsm.controller.ControllerAlimento;
 import org.utl.dsm.model.Producto;
 
+@Provider
 @Path("Alimento")
 public class RestAlimento extends Application {
-
+    
     private final Gson gson = new Gson();
 
     @Path("getAllAlimentos")

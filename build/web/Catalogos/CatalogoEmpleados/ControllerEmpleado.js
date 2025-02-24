@@ -1,6 +1,45 @@
 const API_BASE_URL = "http://localhost:8080/GestionElZarape/api/Empleado";
 let selectedEmployeeId = null;
 
+function getAuthToken() {
+    const authData = localStorage.getItem("authData");
+    return authData ? JSON.parse(authData).token : null;
+}
+
+function getAuthUser() {
+    const authData = localStorage.getItem("authData");
+    return authData ? JSON.parse(authData).usuario : null;
+}
+
+function showAlert(message, type = "warning") {
+    alert(`${type.toUpperCase()}: ${message}`);
+}
+
+function validateToken(callback) {
+    const authData = localStorage.getItem("authData");
+    if (!authData) {
+        showAlert("No tienes autorización para realizar esta acción. Inicia sesión.", "danger");
+        window.location.href = "../../index.html";
+        return;
+    }
+
+    const { usuario, token } = JSON.parse(authData);
+
+    fetch(`http://localhost:8080/GestionElZarape/api/Login/validarToken?nombreU=${encodeURIComponent(usuario)}&token=${encodeURIComponent(token)}`)
+    .then(response => response.json())
+    .then(data => {
+        if (!data.valido) {
+            showAlert("Sesión expirada o token inválido. Inicia sesión nuevamente.", "danger");
+            localStorage.removeItem("authData");
+            return;
+        }
+        callback();
+    })
+    .catch(error => {
+        console.error("Error al validar el token:", error);
+    });
+}
+
 function renderEmployeeList(empleados) {
     const userList = document.getElementById("user-list");
     userList.innerHTML = empleados.map(empleado => `
@@ -67,7 +106,15 @@ function cancelEdit() {
 
 async function getAllEmployees() {
     try {
-        const response = await fetch(`${API_BASE_URL}/getAllEmpleado`);
+        const token = getAuthToken();
+        const usuario = getAuthUser();
+        const response = await fetch('http://localhost:8080/GestionElZarape/api/Empleado/getAllEmpleado', {
+            headers: { 
+                "Authorization": `Bearer ${token}`,
+                "usuario":usuario,
+                "token":token
+            }
+        });
         const empleados = await response.json();
         renderEmployeeList(empleados);
     } catch (error) {
@@ -77,10 +124,14 @@ async function getAllEmployees() {
 
 async function insertEmployee(empleado) {
     try {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
         const response = await fetch(`${API_BASE_URL}/insertEmpleado`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "usuario":usuario,
+                "token":token
             },
             body: new URLSearchParams(empleado)
         });
@@ -111,10 +162,14 @@ document.getElementById("user-form").addEventListener("submit", function (event)
 
 async function updateEmployee(empleado) {
     try {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
         const response = await fetch(`${API_BASE_URL}/updateEmpleado`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "usuario":usuario,
+                "token":token
             },
             body: new URLSearchParams(empleado)
         });
@@ -129,9 +184,13 @@ async function updateEmployee(empleado) {
 
 async function deleteEmployee(idEmpleado) {
     try {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
         const response = await fetch(`${API_BASE_URL}/deleteEmpleado`, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            headers: { "Content-Type": "application/x-www-form-urlencoded",
+                "usuario":usuario,
+                "token":token },
             body: new URLSearchParams({ idEmpleado }),
         });
         const data = await response.json();
@@ -162,6 +221,39 @@ function filterEmpleadosList(searchTerm) {
             row.style.display = 'none';
         }
     });
+}
+
+function borrarTokenE() {
+    const authData = localStorage.getItem("authData");
+
+    if (authData) {
+        try {
+            const parsedAuthData = JSON.parse(authData);
+            const usuario = parsedAuthData.usuario;
+
+            if (usuario) {
+                fetch(`http://localhost:8080/GestionElZarape/api/Login/eliminartoken?nombreU=${encodeURIComponent(usuario)}`, {
+                    method: "DELETE",
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar el token en el servidor");
+                    }
+                })
+                .catch(error => console.error("Error:", error))
+                .finally(() => {
+                    localStorage.removeItem("authData");
+                });
+            } else {
+                console.error("No se encontró el usuario en authData");
+            }
+        } catch (error) {
+            console.error("Error al parsear authData:", error);
+        }
+    } else {
+        console.log("No hay datos de autenticación en localStorage");
+    }
+    localStorage.removeItem("authData");
 }
 
 getAllEmployees();

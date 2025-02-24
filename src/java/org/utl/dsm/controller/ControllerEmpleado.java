@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.utl.dsm.model.Usuario;
 import org.utl.dsm.db.ConexionBD;
 import org.utl.dsm.model.Ciudad;
@@ -70,7 +73,7 @@ public class ControllerEmpleado {
         empleado.setPersona(persona);
         empleado.setCiudad(ciudad);
         empleado.setSucursal(sucursal);
-        empleado.setEstado(estado); 
+        empleado.setEstado(estado);
 
         return empleado;
     }
@@ -91,9 +94,9 @@ public class ControllerEmpleado {
             stmt.setString(6, contrasenia);
             stmt.setString(7, nombreSucursal);
 
-            stmt.registerOutParameter(8, java.sql.Types.INTEGER); 
-            stmt.registerOutParameter(9, java.sql.Types.INTEGER); 
-            stmt.registerOutParameter(10, java.sql.Types.INTEGER); 
+            stmt.registerOutParameter(8, java.sql.Types.INTEGER);
+            stmt.registerOutParameter(9, java.sql.Types.INTEGER);
+            stmt.registerOutParameter(10, java.sql.Types.INTEGER);
 
             stmt.execute();
 
@@ -140,8 +143,8 @@ public class ControllerEmpleado {
         return result;
     }
 
-    public String updateEmpleado(int idEmpleado, String nombre, String apellidos, String telefono, 
-                                 String nombreCiudad, String nombreUsuario, String contrasenia, String nombreSucursal) throws SQLException {
+    public String updateEmpleado(int idEmpleado, String nombre, String apellidos, String telefono,
+            String nombreCiudad, String nombreUsuario, String contrasenia, String nombreSucursal) throws SQLException {
         String result = "Empleado actualizado correctamente";
 
         ConexionBD connMysql = new ConexionBD();
@@ -154,10 +157,10 @@ public class ControllerEmpleado {
             stmt.setString(2, nombre);
             stmt.setString(3, apellidos);
             stmt.setString(4, telefono);
-            stmt.setString(5, nombreCiudad); 
-            stmt.setString(6, nombreUsuario); 
-            stmt.setString(7, contrasenia);   
-            stmt.setString(8, nombreSucursal); 
+            stmt.setString(5, nombreCiudad);
+            stmt.setString(6, nombreUsuario);
+            stmt.setString(7, contrasenia);
+            stmt.setString(8, nombreSucursal);
 
             stmt.execute();
         } catch (SQLException e) {
@@ -169,4 +172,5 @@ public class ControllerEmpleado {
 
         return result;
     }
+
 }

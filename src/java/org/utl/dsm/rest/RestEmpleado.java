@@ -1,23 +1,28 @@
 package org.utl.dsm.rest;
 
 import com.google.gson.Gson;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.utl.dsm.controller.ControllerEmpleado;
 import org.utl.dsm.model.Empleado;
+import org.utl.dsm.model.Usuario;
 
 @Path("Empleado")
 public class RestEmpleado extends Application {
-    
+
     private final Gson gson = new Gson();
 
     @Path("getAllEmpleado")
@@ -52,7 +57,7 @@ public class RestEmpleado extends Application {
             @FormParam("nombreUsuario") String nombreUsuario,
             @FormParam("contrasenia") String contrasenia,
             @FormParam("nombreSucursal") String nombreSucursal) {
-        
+
         Map<String, String> response = new HashMap<>();
         try {
             ControllerEmpleado ce = new ControllerEmpleado();
@@ -113,4 +118,5 @@ public class RestEmpleado extends Application {
 
         return Response.ok(gson.toJson(response)).build();
     }
+
 }

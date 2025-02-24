@@ -1,7 +1,55 @@
 let selectedBebidaId = null;
 
+function getAuthToken() {
+    const authData = localStorage.getItem("authData");
+    return authData ? JSON.parse(authData).token : null;
+}
+
+function getAuthUser() {
+    const authData = localStorage.getItem("authData");
+    return authData ? JSON.parse(authData).usuario : null;
+}
+
+function showAlert(message, type = "warning") {
+    alert(`${type.toUpperCase()}: ${message}`);
+}
+
+function validateToken(callback) {
+    const authData = localStorage.getItem("authData");
+    if (!authData) {
+        showAlert("No tienes autorización para realizar esta acción. Inicia sesión.", "danger");
+        window.location.href = "../../index.html";
+        return;
+    }
+
+    const { usuario, token } = JSON.parse(authData);
+
+    fetch(`http://localhost:8080/GestionElZarape/api/Login/validarToken?nombreU=${encodeURIComponent(usuario)}&token=${encodeURIComponent(token)}`)
+    .then(response => response.json())
+    .then(data => {
+        if (!data.valido) {
+            showAlert("Sesión expirada o token inválido. Inicia sesión nuevamente.", "danger");
+            localStorage.removeItem("authData");
+            return;
+        }
+        callback();
+    })
+    .catch(error => {
+        console.error("Error al validar el token:", error);
+    });
+}
+
 function loadBebidasList() {
-    fetch('http://localhost:8080/GestionElZarape/api/Bebida/getAllBebidas')
+    validateToken(() => {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
+        fetch('http://localhost:8080/GestionElZarape/api/Bebida/getAllBebidas', {
+            headers: { 
+                "Authorization": `Bearer ${token}`,
+                "usuario":usuario,
+                "token":token
+            }
+        })
     .then(response => {
         if (!response.ok)
             throw new Error('Error en la respuesta del servidor');
@@ -32,6 +80,7 @@ function loadBebidasList() {
         });
     })
     .catch(error => console.error('Error al cargar los alimentos:', error));
+    });
 }
 
 function selectBebida(bebidas) {
@@ -60,7 +109,10 @@ function clearForm() {
 
 function saveBebida(event) {
     event.preventDefault();
-
+    
+    validateToken(() => {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
     const BebidasData = {
         idProducto: selectedBebidaId,
         nombre: document.getElementById('beverage-name').value.trim(),
@@ -83,7 +135,12 @@ function saveBebida(event) {
 
     fetch(url, {
         method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                "Authorization": `Bearer ${token}`,
+                "usuario":usuario,
+                "token":token
+            },
         body: formData,
     })
     .then(response => {
@@ -97,6 +154,7 @@ function saveBebida(event) {
         loadBebidasList();
     })
     .catch(error => console.error('Error al guardar la bebida:', error));
+    });
 }
 
 function deleteBebida() {
@@ -104,13 +162,21 @@ function deleteBebida() {
         alert('No hay ningúna bebida seleccionada');
         return;
     }
-
+    
+    validateToken(() => {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
     if (confirm('¿Estás seguro de eliminar esta bebida?')) {
         const formData = new URLSearchParams({idProducto: selectedBebidaId}).toString();
 
         fetch('http://localhost:8080/GestionElZarape/api/Bebida/deleteBebida', {
             method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                "Authorization": `Bearer ${token}`,
+                "usuario":usuario,
+                "token":token
+            },
             body: formData,
         })
                 .then(response => {
@@ -125,6 +191,7 @@ function deleteBebida() {
                 })
                 .catch(error => console.error('Error al eliminar la bebida:', error));
     }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -155,5 +222,39 @@ function filterBebidasList(searchTerm) {
         }
     });
 }
+
+function borrarTokenB() {
+    const authData = localStorage.getItem("authData");
+
+    if (authData) {
+        try {
+            const parsedAuthData = JSON.parse(authData);
+            const usuario = parsedAuthData.usuario;
+
+            if (usuario) {
+                fetch(`http://localhost:8080/GestionElZarape/api/Login/eliminartoken?nombreU=${encodeURIComponent(usuario)}`, {
+                    method: "DELETE",
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar el token en el servidor");
+                    }
+                })
+                .catch(error => console.error("Error:", error))
+                .finally(() => {
+                    localStorage.removeItem("authData");
+                });
+            } else {
+                console.error("No se encontró el usuario en authData");
+            }
+        } catch (error) {
+            console.error("Error al parsear authData:", error);
+        }
+    } else {
+        console.log("No hay datos de autenticación en localStorage");
+    }
+    localStorage.removeItem("authData");
+}
+
 
 loadBebidasList();

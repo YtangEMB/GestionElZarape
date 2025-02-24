@@ -42,7 +42,7 @@
                         </ul>
                 </div>
             </div>
-            <a href="../../index.html" class="login-button">Cerrar sesión</a>
+            <a href="../../index.html" onclick="borrarTokenB()" class="login-button">Cerrar sesión</a>
             <button class="navbar-toggler pe-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -61,19 +61,19 @@
                         </div>
                     <div class="form-group">
                         <label for="beverage-name">Nombre</label>
-                        <input type="text" id="beverage-name" class="form-control" placeholder="Nombre" required>
+                        <input type="text" id="beverage-name" class="form-control" placeholder="Nombre (max 45 caracteres)" pattern="[A-Za-z]{1,45}" required>
                     </div>
                     <div class="form-group">
                         <label for="beverage-price">Precio</label>
-                        <input type="text" id="beverage-price" class="form-control" placeholder="Precio" required>
+                        <input type="text" id="beverage-price" class="form-control" placeholder="Precio" min="0.01" step="0.01" required>
                     </div>
                     <div class="form-group">
                         <label for="beverage-description">Descripción</label>
-                        <textarea id="beverage-description" class="form-control" placeholder="Descripción" rows="3" required></textarea>
+                        <textarea id="beverage-description" class="form-control" placeholder="Descripción" maxlength="255" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="beverage-photo">Foto (URL)</label>
-                        <input type="text" id="beverage-photo" class="form-control" placeholder="URL de la foto" required>
+                        <input type="url" id="beverage-photo" class="form-control" placeholder="URL de la foto" required>
                     </div>
                     <div class="form-group">
                         <label for="beverage-category">Categoría</label>

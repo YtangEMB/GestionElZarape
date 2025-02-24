@@ -42,7 +42,7 @@
                         </ul>
                     </div>
                 </div>
-                <a href="../../index.html" class="login-button">Cerrar sesión</a>
+                <a href="../../index.html"onclick="borrarTokenE()" class="login-button">Cerrar sesión</a>
                 <button class="navbar-toggler pe-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -61,31 +61,31 @@
                         </div>
                         <div class="form-group">
                             <label for="user-id">Usuario</label>
-                            <input type="text" id="user-user" class="form-control" placeholder="Usuario" required>
+                            <input type="text" id="user-user" class="form-control" placeholder="Usuario" pattern="[A-Za-z]{1,45}" required>
                         </div>
                         <div class="form-group">
                             <label for="user-password">Contraseña</label>
-                            <input type="password" id="user-password" class="form-control" placeholder="Contraseña" required>
+                            <input type="password" id="user-password" class="form-control" placeholder="Contraseña" pattern="" required>
                         </div>
                         <div class="form-group">
                             <label for="user-name">Nombre</label>
-                            <input type="text" id="user-name" class="form-control" placeholder="Nombre" required>
+                            <input type="text" id="user-name" class="form-control" placeholder="Nombre" pattern="[A-Za-z]{1,45}" required>
                         </div>
                         <div class="form-group">
                             <label for="user-lastname">Apellidos</label>
-                            <input type="text" id="user-lastname" class="form-control" placeholder="Apellidos" required>
+                            <input type="text" id="user-lastname" class="form-control" placeholder="Apellidos" pattern="[A-Za-z]{1,45}" required>
                         </div>
                         <div class="form-group">
                             <label for="user-phone">Teléfono</label>
-                            <input type="text" id="user-phone" class="form-control" placeholder="Teléfono" required>
+                            <input type="text" id="user-phone" class="form-control" placeholder="Teléfono (xxx-xxx-xxxx)" pattern="{1,12}" required>
                         </div>
                         <div class="form-group">
                             <label for="user-city">Ciudad</label>
-                            <input type="text" id="user-city" class="form-control" placeholder="Ciudad" required>
+                            <input type="text" id="user-city" class="form-control" placeholder="Ciudad" pattern="[A-Za-z]{1,129}" required>
                         </div>
                         <div class="form-group">
                             <label for="user-branch">Sucursal</label>
-                            <input type="text" id="user-branch" class="form-control" placeholder="Sucursal" required>
+                            <input type="text" id="user-branch" class="form-control" placeholder="Sucursal" pattern="[A-Za-z]{1,65}" required>
                         </div>
                         <br>
                         <button type="submit" class="save">Guardar</button>

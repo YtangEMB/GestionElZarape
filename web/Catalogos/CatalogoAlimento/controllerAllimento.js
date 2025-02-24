@@ -1,37 +1,83 @@
 let selectedFoodId = null;
 
+function getAuthToken() {
+    const authData = localStorage.getItem("authData");
+    return authData ? JSON.parse(authData).token : null;
+}
+
+function getAuthUser() {
+    const authData = localStorage.getItem("authData");
+    return authData ? JSON.parse(authData).usuario : null;
+}
+
+function showAlert(message, type = "warning") {
+    alert(`${type.toUpperCase()}: ${message}`);
+}
+
+function validateToken(callback) {
+    const authData = localStorage.getItem("authData");
+    if (!authData) {
+        showAlert("No tienes autorización para realizar esta acción. Inicia sesión.", "danger");
+        window.location.href = "../../index.html";
+        return;
+    }
+
+    const { usuario, token } = JSON.parse(authData);
+
+    fetch(`http://localhost:8080/GestionElZarape/api/Login/validarToken?nombreU=${encodeURIComponent(usuario)}&token=${encodeURIComponent(token)}`)
+    .then(response => response.json())
+    .then(data => {
+        if (!data.valido) {
+            showAlert("Sesión expirada o token inválido. Inicia sesión nuevamente.", "danger");
+            localStorage.removeItem("authData");
+            return;
+        }
+        callback();
+    })
+    .catch(error => {
+        console.error("Error al validar el token:", error);
+    });
+}
+
 function loadFoodList() {
-    fetch('http://localhost:8080/GestionElZarape/api/Alimento/getAllAlimentos')
-            .then(response => {
-                if (!response.ok)
-                    throw new Error('Error en la respuesta del servidor');
-                return response.json();
-            })
-            .then(data => {
-                const foodList = document.getElementById('food-list');
-                foodList.innerHTML = '';
+    validateToken(() => {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
+        fetch('http://localhost:8080/GestionElZarape/api/Alimento/getAllAlimentos', {
+            headers: { 
+                "Authorization": `Bearer ${token}`,
+                "usuario":usuario,
+                "token":token
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            return response.json();
+        })
+        .then(data => {
+            const foodList = document.getElementById('food-list');
+            foodList.innerHTML = '';
 
-                if (data.data.length === 0) {
-                    const emptyRow = document.createElement('tr');
-                    emptyRow.innerHTML = '<td colspan="5">No hay alimentos registrados.</td>';
-                    foodList.appendChild(emptyRow);
-                    return;
-                }
+            if (data.data.length === 0) {
+                foodList.innerHTML = '<tr><td colspan="5">No hay alimentos registrados.</td></tr>';
+                return;
+            }
 
-                data.data.forEach(food => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
+            data.data.forEach(food => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
                     <td>${food.nombre}</td>
                     <td>${food.precio.toFixed(2)}</td>
                     <td>${food.descripcion}</td>
                     <td><img src="${food.foto}" alt="${food.nombre}" style="width: 50px; height: 50px;"></td>
                     <td>${food.categoria.descripcion}</td>
-                    `;
-                    row.addEventListener('click', () => selectFood(food));
-                    foodList.appendChild(row);
-                });
-            })
-            .catch(error => console.error('Error al cargar las bebidas:', error));
+                `;
+                row.addEventListener('click', () => selectFood(food));
+                foodList.appendChild(row);
+            });
+        })
+        .catch(error => console.error('Error al cargar los alimentos:', error));
+    });
 }
 
 function selectFood(food) {
@@ -61,42 +107,48 @@ function clearForm() {
 function saveFood(event) {
     event.preventDefault();
 
-    const foodData = {
-        idProducto: selectedFoodId,
-        nombre: document.getElementById('food-name').value.trim(),
-        descripcion: document.getElementById('food-description').value.trim(),
-        foto: document.getElementById('food-photo').value.trim(),
-        precio: parseFloat(document.getElementById('food-price').value),
-        categoria: document.getElementById('food-category').value.trim(),
-    };
+    validateToken(() => {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
+        const foodData = {
+            idProducto: selectedFoodId,
+            nombre: document.getElementById('food-name').value.trim(),
+            descripcion: document.getElementById('food-description').value.trim(),
+            foto: document.getElementById('food-photo').value.trim(),
+            precio: parseFloat(document.getElementById('food-price').value),
+            categoria: document.getElementById('food-category').value.trim(),
+        };
 
-    if (!foodData.nombre || isNaN(foodData.precio) || !foodData.foto) {
-        alert('Por favor, completa los campos requeridos correctamente.');
-        return;
-    }
+        if (!foodData.nombre || isNaN(foodData.precio) || !foodData.foto) {
+            alert('Por favor, completa los campos requeridos correctamente.');
+            return;
+        }
 
-    const url = selectedFoodId
+        const url = selectedFoodId
             ? 'http://localhost:8080/GestionElZarape/api/Alimento/updateAlimento'
             : 'http://localhost:8080/GestionElZarape/api/Alimento/insertAlimento';
 
-    const formData = new URLSearchParams(foodData).toString();
-
-    fetch(url, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: formData,
-    })
-            .then(response => {
-                if (!response.ok)
-                    throw new Error('Error al guardar el alimento');
-                return response.json();
-            })
-            .then(data => {
-                alert(data.result || 'Operación exitosa');
-                clearForm();
-                loadFoodList();
-            })
-            .catch(error => console.error('Error al guardar el alimento:', error));
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                "Authorization": `Bearer ${token}`,
+                "usuario":usuario,
+                "token":token
+            },
+            body: new URLSearchParams(foodData).toString(),
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error al guardar el alimento');
+            return response.json();
+        })
+        .then(data => {
+            alert(data.result || 'Operación exitosa');
+            clearForm();
+            loadFoodList();
+        })
+        .catch(error => console.error('Error al guardar el alimento:', error));
+    });
 }
 
 function deleteFood() {
@@ -105,28 +157,35 @@ function deleteFood() {
         return;
     }
 
-    if (confirm('¿Estás seguro de eliminar este alimento?')) {
-        const formData = new URLSearchParams({idProducto: selectedFoodId}).toString();
-
-        fetch('http://localhost:8080/GestionElZarape/api/Alimento/deleteAlimento', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: formData,
-        })
-                .then(response => {
-                    if (!response.ok)
-                        throw new Error('Error al eliminar el alimento');
-                    return response.json();
-                })
-                .then(data => {
-                    alert(data.result || 'Eliminación exitosa');
-                    clearForm();
-                    loadFoodList();
-                })
-                .catch(error => console.error('Error al eliminar el alimento:', error));
-    }
+    validateToken(() => {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
+        if (confirm('¿Estás seguro de eliminar este alimento?')) {
+            fetch('http://localhost:8080/GestionElZarape/api/Alimento/deleteAlimento', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    "Authorization": `Bearer ${token}`,
+                    "usuario":usuario,
+                    "token":token
+                },
+                body: new URLSearchParams({ idProducto: selectedFoodId }).toString(),
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Error al eliminar el alimento');
+                return response.json();
+            })
+            .then(data => {
+                alert(data.result || 'Eliminación exitosa');
+                clearForm();
+                loadFoodList();
+            })
+            .catch(error => console.error('Error al eliminar el alimento:', error));
+        }
+    });
 }
 
+// Evento al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
     loadFoodList();
     document.getElementById('food-form').addEventListener('submit', saveFood);
@@ -135,23 +194,35 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('cancel-edit').addEventListener('click', clearForm);
 });
 
-document.getElementById('search-input').addEventListener('input', function () {
-    const searchTerm = this.value.toLowerCase();
-    filterFoodList(searchTerm);
-});
+function borrarTokenA() {
+    const authData = localStorage.getItem("authData");
 
-function filterFoodList(searchTerm) {
-    const foodList = document.getElementById('food-list');
-    const rows = foodList.getElementsByTagName('tr');
+    if (authData) {
+        try {
+            const parsedAuthData = JSON.parse(authData);
+            const usuario = parsedAuthData.usuario;
 
-    Array.from(rows).forEach(row => {
-        const foodName = row.cells[0].textContent.toLowerCase();
-        const foodCategory = row.cells[4].textContent.toLowerCase();
-
-        if (foodName.includes(searchTerm) || foodCategory.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
+            if (usuario) {
+                fetch(`http://localhost:8080/GestionElZarape/api/Login/eliminartoken?nombreU=${encodeURIComponent(usuario)}`, {
+                    method: "DELETE",
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar el token en el servidor");
+                    }
+                })
+                .catch(error => console.error("Error:", error))
+                .finally(() => {
+                    localStorage.removeItem("authData");
+                });
+            } else {
+                console.error("No se encontró el usuario en authData");
+            }
+        } catch (error) {
+            console.error("Error al parsear authData:", error);
         }
-    });
+    } else {
+        console.log("No hay datos de autenticación en localStorage");
+    }
+    localStorage.removeItem("authData");
 }

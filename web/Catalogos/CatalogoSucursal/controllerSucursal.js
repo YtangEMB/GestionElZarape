@@ -1,6 +1,45 @@
 const API_BASE_URL = "http://localhost:8080/GestionElZarape/api/Sucursal";
 let selectedBranchId = null;
 
+function getAuthToken() {
+    const authData = localStorage.getItem("authData");
+    return authData ? JSON.parse(authData).token : null;
+}
+
+function getAuthUser() {
+    const authData = localStorage.getItem("authData");
+    return authData ? JSON.parse(authData).usuario : null;
+}
+
+function showAlert(message, type = "warning") {
+    alert(`${type.toUpperCase()}: ${message}`);
+}
+
+function validateToken(callback) {
+    const authData = localStorage.getItem("authData");
+    if (!authData) {
+        showAlert("No tienes autorización para realizar esta acción. Inicia sesión.", "danger");
+        window.location.href = "../../index.html";
+        return;
+    }
+
+    const { usuario, token } = JSON.parse(authData);
+
+    fetch(`http://localhost:8080/GestionElZarape/api/Login/validarToken?nombreU=${encodeURIComponent(usuario)}&token=${encodeURIComponent(token)}`)
+    .then(response => response.json())
+    .then(data => {
+        if (!data.valido) {
+            showAlert("Sesión expirada o token inválido. Inicia sesión nuevamente.", "danger");
+            localStorage.removeItem("authData");
+            return;
+        }
+        callback();
+    })
+    .catch(error => {
+        console.error("Error al validar el token:", error);
+    });
+}
+
 function renderBranchList(sucursales) {
     const branchList = document.getElementById("branch-list");
     branchList.innerHTML = sucursales.map(sucursal => `
@@ -82,7 +121,15 @@ function cancelEdit() {
 
 async function getAllSucursales() {
     try {
-        const response = await fetch(`${API_BASE_URL}/getAllSucursales`);
+        const token = getAuthToken();
+        const usuario = getAuthUser();
+        const response = await fetch('http://localhost:8080/GestionElZarape/api/Sucursal/getAllSucursales', {
+            headers: { 
+                "Authorization": `Bearer ${token}`,
+                "usuario":usuario,
+                "token":token
+            }
+        });
         const data = await response.json();
         if (data.result === "success") {
             renderBranchList(data.data);
@@ -96,10 +143,14 @@ async function getAllSucursales() {
 
 async function insertSucursal(sucursal) {
     try {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
         const response = await fetch(`${API_BASE_URL}/insertSucursal`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "usuario":usuario,
+                "token":token
             },
             body: new URLSearchParams(sucursal)
         });
@@ -136,10 +187,14 @@ document.getElementById("branch-form").addEventListener("submit", function (even
 
 async function updateSucursal(sucursal) {
     try {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
         const response = await fetch(`${API_BASE_URL}/updateSucursal`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "usuario":usuario,
+                "token":token
             },
             body: new URLSearchParams(sucursal)
         });
@@ -158,10 +213,14 @@ async function updateSucursal(sucursal) {
 
 async function deleteSucursal(idSucursal) {
     try {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
         const response = await fetch(`${API_BASE_URL}/deleteSucursal`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "usuario":usuario,
+                "token":token
             },
             body: new URLSearchParams({ idSucursal })
         });
@@ -197,6 +256,39 @@ function filterSucursalesList(searchTerm) {
             row.style.display = 'none';
         }
     });
+}
+
+function borrarTokenS() {
+    const authData = localStorage.getItem("authData");
+
+    if (authData) {
+        try {
+            const parsedAuthData = JSON.parse(authData);
+            const usuario = parsedAuthData.usuario;
+
+            if (usuario) {
+                fetch(`http://localhost:8080/GestionElZarape/api/Login/eliminartoken?nombreU=${encodeURIComponent(usuario)}`, {
+                    method: "DELETE",
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar el token en el servidor");
+                    }
+                })
+                .catch(error => console.error("Error:", error))
+                .finally(() => {
+                    localStorage.removeItem("authData");
+                });
+            } else {
+                console.error("No se encontró el usuario en authData");
+            }
+        } catch (error) {
+            console.error("Error al parsear authData:", error);
+        }
+    } else {
+        console.log("No hay datos de autenticación en localStorage");
+    }
+    localStorage.removeItem("authData");
 }
 
 getAllSucursales();
