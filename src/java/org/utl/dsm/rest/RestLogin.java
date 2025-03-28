@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.utl.dsm.controller.ControllerLogin;
+import org.utl.dsm.model.Cliente;
 import org.utl.dsm.model.Empleado;
 
 @Path("Login")
@@ -52,7 +53,6 @@ public class RestLogin {
 
         return Response.ok(gson.toJson(response)).build();
     }
-    
     
     @Path("cheeky")
     @Produces(MediaType.APPLICATION_JSON)
@@ -124,5 +124,35 @@ public class RestLogin {
         }
 
         return Response.ok(out).build();
+    }
+    
+    @Path("validarLoginC")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response validarLoginC(
+            @FormParam("usuario") String usuario,
+            @FormParam("contrasenia") String contrasenia) {
+
+        Map<String, String> response = new HashMap<>();
+        try {
+            ControllerLogin ce = new ControllerLogin();
+            Cliente cliente = ce.validarLoginC(usuario, contrasenia);
+
+            if (cliente != null) {
+                response.put("result", "success");
+                response.put("message", "Login exitoso");
+                response.put("idEmpleado", String.valueOf(cliente.getIdCliente()));
+                response.put("nombre", cliente.getPersona().getNombre());
+            } else {
+                response.put("result", "error");
+                response.put("message", "Usuario o contraseña incorrectos");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("result", "error");
+            response.put("message", "Error al validar el login: " + e.getMessage());
+        }
+
+        return Response.ok(gson.toJson(response)).build();
     }
 }

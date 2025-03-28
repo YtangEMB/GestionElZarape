@@ -1,5 +1,7 @@
 package org.utl.dsm.model;
 
+import org.utl.dsm.model.Categoria;
+
 public class Producto {
     private int idProducto;
     private String nombre;

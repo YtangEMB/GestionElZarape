@@ -16,7 +16,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.utl.dsm.controller.ControllerCliente;
 import org.utl.dsm.controller.ControllerEmpleado;
+import org.utl.dsm.model.Ciudad;
 import org.utl.dsm.model.Empleado;
 import org.utl.dsm.model.Usuario;
 
@@ -117,6 +119,26 @@ public class RestEmpleado extends Application {
         }
 
         return Response.ok(gson.toJson(response)).build();
+    }
+    
+    @Path("getAllCiudad")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllCiudad() {
+        List<Ciudad> lista = null;
+        Gson gson = new Gson();
+        String out;
+
+        try {
+            ControllerEmpleado ce = new ControllerEmpleado();
+            lista = ce.getAllCiudades();
+            out = gson.toJson(lista);
+        } catch (Exception e) {
+            e.printStackTrace();
+            out = "{\"result\":\"Error de servidor\"}";
+            return Response.serverError().entity(out).build();
+        }
+        return Response.ok(out).build();
     }
 
 }

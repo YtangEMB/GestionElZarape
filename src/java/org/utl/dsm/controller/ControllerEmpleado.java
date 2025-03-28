@@ -78,8 +78,13 @@ public class ControllerEmpleado {
         return empleado;
     }
 
-    public String insertarEmpleado(String nombre, String apellidos, String telefono, String nombreCiudad, String nombreUsuario, String contrasenia, String nombreSucursal) throws SQLException {
+    public String insertarEmpleado(String nombre, String apellidos, String telefono,
+            String nombreCiudad, String nombreUsuario, String contrasenia,
+            String nombreSucursal) throws SQLException {
         String result = "Empleado insertado correctamente";
+
+        // Encriptar la contraseña con SHA1
+        String contraseniaEncriptada = DigestUtils.sha1Hex(contrasenia);
 
         ConexionBD connMysql = new ConexionBD();
         Connection conn = connMysql.open();
@@ -91,7 +96,7 @@ public class ControllerEmpleado {
             stmt.setString(3, telefono);
             stmt.setString(4, nombreCiudad);
             stmt.setString(5, nombreUsuario);
-            stmt.setString(6, contrasenia);
+            stmt.setString(6, contraseniaEncriptada); // Usar la contraseña encriptada
             stmt.setString(7, nombreSucursal);
 
             stmt.registerOutParameter(8, java.sql.Types.INTEGER);
@@ -104,7 +109,8 @@ public class ControllerEmpleado {
             int idUsuario = stmt.getInt(9);
             int idEmpleado = stmt.getInt(10);
 
-            result = String.format("{\"result\":\"Empleado insertado\", \"idPersona\": %d, \"idUsuario\": %d, \"idEmpleado\": %d}", idPersona, idUsuario, idEmpleado);
+            result = String.format("{\"result\":\"Empleado insertado\", \"idPersona\": %d, \"idUsuario\": %d, \"idEmpleado\": %d}",
+                    idPersona, idUsuario, idEmpleado);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -144,8 +150,12 @@ public class ControllerEmpleado {
     }
 
     public String updateEmpleado(int idEmpleado, String nombre, String apellidos, String telefono,
-            String nombreCiudad, String nombreUsuario, String contrasenia, String nombreSucursal) throws SQLException {
+            String nombreCiudad, String nombreUsuario, String contrasenia, String nombreSucursal)
+            throws SQLException {
         String result = "Empleado actualizado correctamente";
+
+        // Encriptar la nueva contraseña con SHA1
+        String contraseniaEncriptada = DigestUtils.sha1Hex(contrasenia);
 
         ConexionBD connMysql = new ConexionBD();
         Connection conn = connMysql.open();
@@ -159,7 +169,7 @@ public class ControllerEmpleado {
             stmt.setString(4, telefono);
             stmt.setString(5, nombreCiudad);
             stmt.setString(6, nombreUsuario);
-            stmt.setString(7, contrasenia);
+            stmt.setString(7, contraseniaEncriptada); // Usar la contraseña encriptada
             stmt.setString(8, nombreSucursal);
 
             stmt.execute();
@@ -171,6 +181,47 @@ public class ControllerEmpleado {
         }
 
         return result;
+    }
+    
+    public List<Ciudad> getAllCiudades() throws SQLException {
+        String sql = "SELECT * FROM ciudades;";
+        ConexionBD connMysql = new ConexionBD();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<Ciudad> listaCiudad = new ArrayList<>();
+
+        try {
+            conn = connMysql.open();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                listaCiudad.add(fillFromViewCiudad(rs));
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+
+        return listaCiudad;
+    }
+    
+    private Ciudad fillFromViewCiudad(ResultSet rs) throws SQLException {
+        Ciudad ciudad = new Ciudad();
+        
+        ciudad.setIdCiudad(rs.getInt("idCiudad"));
+        ciudad.setNombre(rs.getString("nombre"));
+        ciudad.setIdEstado(rs.getInt("idEstado"));
+
+        return ciudad;
     }
 
 }

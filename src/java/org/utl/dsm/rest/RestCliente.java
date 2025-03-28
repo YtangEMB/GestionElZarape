@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.utl.dsm.controller.ControllerCliente;
+import org.utl.dsm.model.Ciudad;
 import org.utl.dsm.model.Cliente;
 
 @Path("Cliente")
@@ -112,4 +113,5 @@ public class RestCliente extends Application {
 
         return Response.ok(gson.toJson(response)).build();
     }
+    
 }

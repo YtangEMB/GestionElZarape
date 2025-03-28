@@ -9,6 +9,7 @@ import java.util.Date;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.utl.dsm.db.ConexionBD;
 import org.utl.dsm.model.Ciudad;
+import org.utl.dsm.model.Cliente;
 import org.utl.dsm.model.Empleado;
 import org.utl.dsm.model.Estado;
 import org.utl.dsm.model.Persona;
@@ -18,7 +19,7 @@ import org.utl.dsm.model.Usuario;
 public class ControllerLogin {
 
     public Empleado validarLogin(String usuario, String contrasenia) throws SQLException {
-        String sql = "SELECT * FROM viewUsuariosE WHERE usuario = ? AND contrasenia = ?";
+        String sql = "SELECT * FROM viewUsuariosE WHERE usuario = ?";
         ConexionBD connMysql = new ConexionBD();
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -29,11 +30,16 @@ public class ControllerLogin {
             conn = connMysql.open();
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, usuario);
-            pstmt.setString(2, contrasenia);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                empleado = fillFromView(rs);
+                // Obtenemos el hash de la contraseña almacenada
+                String contraseniaHash = rs.getString("contrasenia");
+
+                // Verificamos si la contraseña proporcionada coincide con el hash
+                if (SecurityUtil.verifyPassword(contrasenia, contraseniaHash)) {
+                    empleado = fillFromView(rs);
+                }
             }
         } finally {
             if (rs != null) {
@@ -48,16 +54,7 @@ public class ControllerLogin {
         }
         return empleado;
     }
-    
-    private Usuario fillFromViewT(ResultSet rs) throws SQLException {
-        Usuario usuario = new Usuario();
 
-        usuario.setNombre(rs.getString("usuario"));
-        usuario.setLastToken(rs.getString("token"));
-
-        return usuario;
-    }
-    
     private Empleado fillFromView(ResultSet rs) throws SQLException {
         Persona persona = new Persona();
         Ciudad ciudad = new Ciudad();
@@ -184,5 +181,60 @@ public class ControllerLogin {
         }
 
         return valido;
+    }
+
+    public Cliente validarLoginC(String usuario, String contrasenia) throws SQLException {
+        String sql = "SELECT * FROM viewUsuariosC WHERE usuario = ? AND contrasenia = ?";
+        ConexionBD connMysql = new ConexionBD();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Cliente cliente = null;
+
+        try {
+            conn = connMysql.open();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, usuario);
+            pstmt.setString(2, contrasenia);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                cliente = fillFromViewC(rs);
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return cliente;
+    }
+
+    private Cliente fillFromViewC(ResultSet rs) throws SQLException {
+        Persona persona = new Persona();
+        Ciudad ciudad = new Ciudad();
+        Usuario usuario = new Usuario();
+        Estado estado = new Estado();
+        Cliente cliente = new Cliente();
+
+        cliente.setIdCliente(rs.getInt("idCliente"));
+        usuario.setNombre(rs.getString("usuario"));
+        usuario.setContrasenia(rs.getString("contrasenia"));
+        persona.setNombre(rs.getString("nombre"));
+        persona.setApellidos(rs.getString("apellidos"));
+        persona.setTelefono(rs.getString("telefono"));
+        estado.setNombre(rs.getString("estado"));
+        ciudad.setNombre(rs.getString("ciudad"));
+
+        cliente.setUsuario(usuario);
+        cliente.setPersona(persona);
+        cliente.setCiudad(ciudad);
+        cliente.setEstado(estado);
+        return cliente;
     }
 }

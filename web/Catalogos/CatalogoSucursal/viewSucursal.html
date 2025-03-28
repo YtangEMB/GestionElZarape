@@ -77,7 +77,8 @@
                         </div>
                         <div class="form-group">
                             <label for="branch-photo">Foto</label>
-                            <input type="text" id="branch-photo" class="form-control" placeholder="URL de la foto" required>
+                            <img id="current-branch-photo" style="max-width: 200px; max-height: 200px; display: none; margin-top: 10px;" class="img-thumbnail">
+                            <input type="file" id="branch-photo" class="form-control" accept="image/*">
                         </div>
                         <div class="form-group">
                             <label for="branch-url">URL</label>
@@ -91,9 +92,12 @@
                             <label for="branch-lon">GPS Longitud</label>
                             <input type="text" id="branch-lon" class="form-control" placeholder="GPS Longitud" required>
                         </div>
-                        <div>
+                        <div class="form-group">
                             <label for="branch-city">Ciudad</label>
-                            <input type="text" id="branch-city" class="form-control" placeholder="Ciudad" required>
+                            <input list="cities-list" id="branch-city" class="form-control" placeholder="Escribe o selecciona una ciudad" required>
+                            <datalist id="cities-list">
+                                
+                            </datalist>
                         </div>
                         <div>
                             <label for="branch-time">Horario</label>
@@ -114,24 +118,24 @@
                     </div>
                     <br><h4>Lista de Sucursales</h4>
                     <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Dirección</th>
-                                <th>Foto</th>
-                                <th>URL</th>
-                                <th>GPS_latitud</th>
-                                <th>GPS_longitud</th>
-                                <th>Horarios</th>
-                                <th>Ciudad</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="branch-list">
-                            
-                        </tbody>
-                    </table>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Dirección</th>
+                                    <th>Foto</th>
+                                    <th>URL</th>
+                                    <th>GPS_latitud</th>
+                                    <th>GPS_longitud</th>
+                                    <th>Horarios</th>
+                                    <th>Ciudad</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="branch-list">
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

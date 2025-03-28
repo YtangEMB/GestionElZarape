@@ -65,7 +65,7 @@
                         </div>
                         <div class="form-group">
                             <label for="user-password">Contraseña</label>
-                            <input type="password" id="user-password" class="form-control" placeholder="Contraseña" pattern="" required>
+                            <input type="password" id="user-password" class="form-control" placeholder="Contraseña" required>
                         </div>
                         <div class="form-group">
                             <label for="user-name">Nombre</label>
@@ -81,11 +81,16 @@
                         </div>
                         <div class="form-group">
                             <label for="user-city">Ciudad</label>
-                            <input type="text" id="user-city" class="form-control" placeholder="Ciudad" pattern="[A-Za-z]{1,129}" required>
+                            <input list="cities-list" id="user-city" class="form-control" placeholder="Escribe o selecciona una ciudad" required>
+                            <datalist id="cities-list">
+                                
+                            </datalist>
                         </div>
                         <div class="form-group">
                             <label for="user-branch">Sucursal</label>
-                            <input type="text" id="user-branch" class="form-control" placeholder="Sucursal" pattern="[A-Za-z]{1,65}" required>
+                            <select id="user-branch" class="form-control" required>
+                                <option value="">Selecciona una sucursal</option>
+                            </select>
                         </div>
                         <br>
                         <button type="submit" class="save">Guardar</button>
@@ -101,22 +106,22 @@
                     </div>
                     <br><h4>Lista de Empleados</h4>
                     <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Usuario</th>
-                                <th>Nombre</th>
-                                <th>Apellidos</th>
-                                <th>Teléfono</th>
-                                <th>Ciudad</th>
-                                <th>Sucursal</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="user-list">
-                            
-                        </tbody>
-                    </table>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Nombre</th>
+                                    <th>Apellidos</th>
+                                    <th>Teléfono</th>
+                                    <th>Ciudad</th>
+                                    <th>Sucursal</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-list">
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

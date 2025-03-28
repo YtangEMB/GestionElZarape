@@ -81,7 +81,10 @@
                         </div>
                         <div class="form-group">
                             <label for="user-city">Ciudad</label>
-                            <input type="text" id="user-city" class="form-control" placeholder="Ciudad" required>
+                            <input list="cities-list" id="user-city" class="form-control" placeholder="Escribe o selecciona una ciudad" required>
+                            <datalist id="cities-list">
+                                
+                            </datalist>
                         </div>
                         <br>
                         <button type="submit" class="save">Guardar</button>
@@ -97,21 +100,21 @@
                     </div>
                     <br><h4>Lista de Clientes</h4>
                     <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Usuario</th>
-                                <th>Nombre</th>
-                                <th>Apellidos</th>
-                                <th>Teléfono</th>
-                                <th>Ciudad</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="user-list">
-                            
-                        </tbody>
-                    </table>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Nombre</th>
+                                    <th>Apellidos</th>
+                                    <th>Teléfono</th>
+                                    <th>Ciudad</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-list">
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

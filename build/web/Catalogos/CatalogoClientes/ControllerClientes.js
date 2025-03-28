@@ -1,6 +1,12 @@
-validateToken();
 const API_BASE_URL = "http://localhost:8080/GestionElZarape/api/Cliente";
 let selectedCustomerId = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    validateToken(() => {
+        getAllCustomer();
+        loadCities(); // Cargar las ciudades al iniciar
+    });
+});
 
 function getAuthToken() {
     const authData = localStorage.getItem("authData");
@@ -65,8 +71,10 @@ function loadCustomer(idCliente) {
     document.getElementById("user-name").value = row.cells[1].textContent;
     document.getElementById("user-lastname").value = row.cells[2].textContent;
     document.getElementById("user-phone").value = row.cells[3].textContent;
-    document.getElementById("user-city").value = row.cells[4].textContent;
     document.getElementById("user-password").value = row.cells[6].textContent;
+    
+    // Establecer el valor de la ciudad (ahora es un input con datalist)
+    document.getElementById("user-city").value = row.cells[4].textContent;
 
     showActionButtons(idCliente);
 }
@@ -259,6 +267,36 @@ function borrarTokenC() {
     localStorage.removeItem("authData");
 }
 
+async function loadCities() {
+    try {
+        const token = getAuthToken();
+        const usuario = getAuthUser();
+        const response = await fetch('http://localhost:8080/GestionElZarape/api/Empleado/getAllCiudad', {
+            headers: { 
+                "Authorization": `Bearer ${token}`,
+                "usuario": usuario,
+                "token": token
+            }
+        });
+        const ciudades = await response.json();
+        const citiesDatalist = document.getElementById('cities-list');
+        
+        // Limpiar el datalist
+        citiesDatalist.innerHTML = '';
+        
+        // Ordenar ciudades alfabéticamente
+        ciudades.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        
+        // Agregar opciones al datalist
+        ciudades.forEach(ciudad => {
+            const option = document.createElement('option');
+            option.value = ciudad.nombre;
+            citiesDatalist.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error al cargar ciudades:", error);
+    }
+}
 
 getAllCustomer();
 

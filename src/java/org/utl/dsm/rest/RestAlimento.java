@@ -55,7 +55,7 @@ public class RestAlimento extends Application {
         try {
             ControllerAlimento ca = new ControllerAlimento();
             String result = ca.insertAlimento(nombre, descripcion, foto, precio, categoria);
-            response.put("result", "success");
+            response.put("result", "success save");
             response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,7 +98,7 @@ public class RestAlimento extends Application {
         try {
             ControllerAlimento ca = new ControllerAlimento();
             String result = ca.updateAlimento(idProducto, nombre, descripcion, foto, precio, categoria);
-            response.put("result", "success");
+            response.put("result", "success update");
             response.put("message", result);
         } catch (Exception e) {
             e.printStackTrace();

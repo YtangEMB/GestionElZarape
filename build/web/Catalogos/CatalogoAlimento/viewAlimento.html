@@ -61,7 +61,7 @@
                         </div>
                         <div class="form-group">
                             <label for="food-name">Nombre</label>
-                            <input type="text" id="food-name" class="form-control" placeholder="Nombre (max 45 caracteres)" pattern="[A-Za-z]{1,45}" required>
+                            <input type="text" id="food-name" class="form-control" placeholder="Nombre (max 45 caracteres)" pattern="{1,45}" required>
                         </div>
                         <div class="form-group">
                             <label for="food-price">Precio</label>
@@ -72,8 +72,9 @@
                             <textarea id="food-description" class="form-control" placeholder="Descripción" maxlength="255" rows="3" required></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="food-photo">Foto (URL)</label>
-                            <input type="url" id="food-photo" class="form-control" placeholder="URL de la foto" required>
+                            <label for="food-photo">Foto</label>
+                            <img id="current-food-photo" style="max-width: 200px; max-height: 200px; display: none; margin-top: 10px;" class="img-thumbnail">
+                            <input type="file" id="food-photo" class="form-control" accept="image/*" required>
                         </div>
                         <div class="form-group">
                             <label for="food-category">Categoría</label>
@@ -85,7 +86,7 @@
                             </select>
                         </div>
                         <br>
-                        <button type="submit" class="save">Guardar</button>
+                        <button type="submit" class="save" id="save-btn">Guardar</button>
                         <button type="button" class="edit" id="edit-btn" style="display:none;">Editar</button>
                         <button type="button" class="delete" id="delete-btn" style="display:none;">Eliminar</button>
                         <button type="button" class="cancel" id="cancel-edit" style="display:none;">Cancelar</button>
